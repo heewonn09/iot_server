@@ -5,4 +5,9 @@ import dto.MemberDTO;
 
 public interface UserDAO {
     public MemberDTO login(String id, String pw);
+    
+    public boolean register(String id, String pw, String name);
+    
+    
+    
 }

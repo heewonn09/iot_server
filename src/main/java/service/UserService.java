@@ -3,5 +3,7 @@ package service;
 import dto.MemberDTO;
 
 public interface UserService {
-    int login(String id, String pw);
+    MemberDTO login(String id, String pw);
+    
+    boolean register(String id, String pw, String name);
 }
