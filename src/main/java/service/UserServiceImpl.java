@@ -3,6 +3,7 @@ package service;
 import dao.UserDAO;
 import dao.UserDAOImpl;
 import dto.MemberDTO;
+import dto.ParkingLogDTO;
 
 public class UserServiceImpl implements UserService{
     private UserDAO dao;
@@ -16,4 +17,11 @@ public class UserServiceImpl implements UserService{
         }
         return user.getAccess_level();
     }
+	@Override
+	public ParkingLogDTO getMyParkingStatus(String vehicleNo) {
+		
+		return null;
+	}
+    
+    
 }

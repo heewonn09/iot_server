@@ -1,6 +1,5 @@
 package dao;
 
-import DBUtil.DBUtil;
 import dto.MemberDTO;
 
 public interface UserDAO {

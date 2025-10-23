@@ -1,7 +1,11 @@
 package service;
 
-import dto.MemberDTO;
+import dto.ParkingLogDTO;
 
 public interface UserService {
     int login(String id, String pw);
+
+
+	ParkingLogDTO getMyParkingStatus(String vehicleNo);
+	
 }

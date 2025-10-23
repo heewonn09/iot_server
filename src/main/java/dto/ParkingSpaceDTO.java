@@ -1,22 +1,24 @@
 package dto;
 
+import java.sql.Timestamp;
+
 public class ParkingSpaceDTO {
 	private int spaceId;
-	private String loaction;
+	private String location;
 	private boolean isOccupied;
 	private String vehicleno;
-	private String lastUpdate;
+	private Timestamp  lastUpdate;
 	
 	
-	public ParkingSpaceDTO(int spaceId, String loaction, boolean isOccupied, String vehicleno, String lastUpdate) {
+	public ParkingSpaceDTO(int spaceId, String location, boolean isOccupied, String vehicleno, Timestamp lastUpdate) {
 		super();
 		this.spaceId = spaceId;
-		this.loaction = loaction;
+		this.location = location;
 		this.isOccupied = isOccupied;
 		this.vehicleno = vehicleno;
 		this.lastUpdate = lastUpdate;
 	}
-	ParkingSpaceDTO(){
+	public ParkingSpaceDTO(){
 		
 	}
 	
@@ -25,10 +27,10 @@ public class ParkingSpaceDTO {
 	}
 	
 	public String getLocation() {
-		return loaction;
+		return location;
 		
 	}
-	public String getLastUpdate() {
+	public Timestamp getLastUpdate() {
 		return lastUpdate;
 	}
 	
@@ -40,8 +42,8 @@ public class ParkingSpaceDTO {
 		return vehicleno;
 	}
 
-	public void setLoaction(String loaction) {
-		this.loaction = loaction;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public void setSpaceId(int spaceId) {
@@ -57,8 +59,12 @@ public class ParkingSpaceDTO {
 	}
 	@Override
 	public String toString() {
-		return "ParkingSpaceDTO [spaceId=" + spaceId + ", loaction=" + loaction + ", isOccupied=" + isOccupied
+		return "ParkingSpaceDTO [spaceId=" + spaceId + ", location=" + location + ", isOccupied=" + isOccupied
 				+ ", vehicleno=" + vehicleno + ", lastUpdate=" + lastUpdate + "]";
+	}
+	public void setLastUpdate(Timestamp timestamp) {
+		
+		
 	}
 
 	
