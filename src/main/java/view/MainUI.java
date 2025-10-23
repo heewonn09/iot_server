@@ -1,7 +1,6 @@
 package view;
 
 import dto.LoginUserDTO;
-import dto.MemberDTO;
 import service.UserService;
 import service.UserServiceImpl;
 
@@ -16,7 +15,8 @@ public class MainUI {
         UserService serv = new UserServiceImpl();
         int role = serv.login(loginInfo.getId(), loginInfo.getPw());
         switch (role){
-            case 9:
+            case 3:
+            case 2:
                 adminMenu(); //관리자 페이지 이동
                 break;
             case 1:
@@ -34,9 +34,8 @@ public class MainUI {
         String id = key.nextLine();
         System.out.print("pw: ");
         String pw = key.nextLine();
-        // login 메서드 호출 -> MySQL에 회원 정보 확인 후 사용자 정보 반환
-        LoginUserDTO user = new LoginUserDTO(id, pw);
-        return user;
+
+        return new LoginUserDTO(id, pw);
     }
 
     public static void adminMenu(){

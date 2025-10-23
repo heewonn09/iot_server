@@ -3,64 +3,60 @@ package dto;
 import java.sql.Timestamp;
 
 public class MemberDTO {
-    private int id;
-    private String userId;
-    private String pass;
+    private int userId;
+    private String id;
     private String name;
     private String cardId;
+    private String pass;
     private int access_level;
     private int officeId;
+    private Boolean isActive;
     private Timestamp created_at;
 
     public MemberDTO() {
     }
-    public MemberDTO(int id, String userId, String pass, String name, String cardId, int access_level, int officeId, Timestamp created_at) {
-        this.id = id;
+
+    public MemberDTO(int userId, String id, String name, String cardId, String pass, int access_level, int officeId, Boolean isActive, Timestamp created_at) {
         this.userId = userId;
-        this.pass = pass;
+        this.id = id;
         this.name = name;
         this.cardId = cardId;
+        this.pass = pass;
         this.access_level = access_level;
         this.officeId = officeId;
+        this.isActive = isActive;
         this.created_at = created_at;
     }
 
     @Override
     public String toString() {
         return "MemberDTO{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", pass='" + pass + '\'' +
+                "userId=" + userId +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", cardId='" + cardId + '\'' +
+                ", pass='" + pass + '\'' +
                 ", access_level=" + access_level +
                 ", officeId=" + officeId +
+                ", isActive=" + isActive +
                 ", created_at=" + created_at +
                 '}';
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public String getPass() {
-        return pass;
+    public String getId() {
+        return id;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -79,6 +75,14 @@ public class MemberDTO {
         this.cardId = cardId;
     }
 
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
     public int getAccess_level() {
         return access_level;
     }
@@ -93,6 +97,14 @@ public class MemberDTO {
 
     public void setOfficeId(int officeId) {
         this.officeId = officeId;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 
     public Timestamp getCreated_at() {

@@ -1,18 +1,39 @@
 package DBUtil;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 public class DBUtil {
+    private static final String PROPERTIES_FILE = "src/main/java/config/db.properties";
+    private static Properties props;
+
+    static {
+        try {
+            FileInputStream fis = new FileInputStream(PROPERTIES_FILE);
+
+            props = new Properties();
+            props.load(fis);
+
+            fis.close();
+            System.out.println("Properties 파일 로드 완료.");
+
+        } catch (IOException e) {
+            System.err.println("db.properties 파일을 찾거나 읽을 수 없습니다.");
+            e.printStackTrace();
+        }
+    }
     // DBMS 초기 연결
     public static Connection getConnect() {
         Connection con = null;
-        String DB_ip = "192.168.14.116";
-        String DB_port = "3306";
-        String DB_name = "smartbuilding";
+        String DB_ip = props.getProperty("db.ip");
+        String DB_port = props.getProperty("db.port");
+        String DB_name = props.getProperty("db.database");
 
         String url = "jdbc:mysql://"+DB_ip+":"+DB_port+"/"+DB_name+"?serverTimezone=UTC";
-        String user = "sample";
-        String password = "1234";
+        String user = props.getProperty("db.user");
+        String password = props.getProperty("db.password");
         try {
             con = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {

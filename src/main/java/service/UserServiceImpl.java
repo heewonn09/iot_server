@@ -10,6 +10,10 @@ public class UserServiceImpl implements UserService{
     public int login(String id, String pw) {
         dao = new UserDAOImpl();
         MemberDTO user = dao.login(id,pw);
+        if(user==null){
+            System.out.println("로그인 정보가 없습니다.");
+            return 0;
+        }
         return user.getAccess_level();
     }
 }

@@ -13,7 +13,7 @@ public class UserDAOImpl implements UserDAO{
     public MemberDTO login(String id, String pw) {
         String sql = """
                 select * from users
-                where user_id = ? and pass = ?
+                where id = ? and pass = ?
                 """;
         Connection con = DBUtil.getConnect();
         PreparedStatement ptmt = null;
@@ -26,7 +26,7 @@ public class UserDAOImpl implements UserDAO{
 
             rs = ptmt.executeQuery();
             if(rs.next()){
-                user = new MemberDTO(rs.getInt("id"), rs.getString("user_id"),rs.getString("pass"), rs.getString("name"), rs.getString("card_id"),rs.getInt("access_level"),rs.getInt(""),rs.getTimestamp("created_at"));
+                user = new MemberDTO(rs.getInt("user_id"), rs.getString("id"),rs.getString("name"), rs.getString("card_id"), rs.getString("pass"),rs.getInt("access_level"),rs.getInt("office_id"),rs.getBoolean("is_active"),rs.getTimestamp("created_at"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
