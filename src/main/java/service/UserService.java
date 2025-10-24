@@ -4,9 +4,10 @@ import dto.MemberDTO;
 import dto.ParkingLogDTO;
 
 public interface UserService {
-    int login(String id, String pw);
-
-
+	   
+	
+	MemberDTO login(String id, String pw);
+	
     // 내 정보 보기
     MemberDTO getUserInfo(String userId);
 

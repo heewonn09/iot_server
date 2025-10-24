@@ -17,11 +17,6 @@ public class MainUI {
     }
 
 
-    public static void adminMenu(){
-        System.out.println("관리자페이지입니다.");
-        AdminMenuUI adminUI = new AdminMenuUI();
-        adminUI.show();
-    }
     
     public String[] registerUI() {
         Scanner key = new Scanner(System.in);
