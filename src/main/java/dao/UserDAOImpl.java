@@ -35,4 +35,23 @@ public class UserDAOImpl implements UserDAO{
         }
         return user;
     }
+    @Override
+    public boolean register(String id, String pw, String name) {
+        String sql = "INSERT INTO users VALUES (null,?,?,'card', ?, 1, null,'123car3333',1,default)";
+        try (Connection con = DBUtil.getConnect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, id);
+            ps.setString(2, name);
+            ps.setString(3, pw);
+            
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
+    
 }
