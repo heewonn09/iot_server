@@ -15,4 +15,8 @@ public interface UserService {
 
     // ✅ 주차 상태 확인 (이미 선언되어 있음)
     ParkingLogDTO getMyParkingStatus(String vehicleNo);
+
+
+    boolean register(String id, String pw, String name);
 }
+

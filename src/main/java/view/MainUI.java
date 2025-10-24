@@ -1,33 +1,11 @@
 package view;
 
-import dto.LoginUserDTO;
-import service.UserService;
-import service.UserServiceImpl;
-
 import java.util.Scanner;
 
+import dto.LoginUserDTO;
+
 public class MainUI {
-    public static void startApp(){
-        System.out.println("Console Menu의 첫 시작점");
-        // 로그인으로 입력된 권한에 따라 관리자용 페이지, 사용자용 페이지 중 구분되어 실행된다.
-        System.out.println("=====스마트 빌딩 서비스=====");
-        LoginUserDTO loginInfo = loginMenu();
-        UserService serv = new UserServiceImpl();
-        int role = serv.login(loginInfo.getId(), loginInfo.getPw());
-        switch (role){
-            case 3:
-            case 2:
-                adminMenu(); //관리자 페이지 이동
-                break;
-            case 1:
-                userMenu(); //사용자 페이지 이동
-                break;
-            default:
-                System.out.println("error");
-                break;
-        }
-    }
-    public static LoginUserDTO loginMenu(){
+    public LoginUserDTO loginUI(){
         Scanner key = new Scanner(System.in);
         System.out.println("회원 로그인을 진행합니다.");
         System.out.print("id: ");
@@ -38,12 +16,50 @@ public class MainUI {
         return new LoginUserDTO(id, pw);
     }
 
+
     public static void adminMenu(){
         System.out.println("관리자페이지입니다.");
         AdminMenuUI adminUI = new AdminMenuUI();
         adminUI.show();
     }
-    public static void userMenu(){
+    
+    public String[] registerUI() {
+        Scanner key = new Scanner(System.in);
+        System.out.println("회원가입을 진행합니다.");
+        System.out.print("id: ");
+        String id = key.nextLine();
+        System.out.print("pw: ");
+        String pw = key.nextLine();
+        System.out.print("이름: ");
+        String name = key.nextLine();
+        return new String[]{id, pw, name};
+
+    }
+
+    public static int adminUI(){
+    	Scanner key = new Scanner(System.in);
+        System.out.println("관리자페이지입니다.");
+        System.out.println("1. 출입문 제어 기능");
+        System.out.println("2. 엘리베이터 제어 기능");
+        System.out.println("3. 호실 별 디바이스 제어 기능");
+        System.out.println("4. 주차장 제어 기능");
+        System.out.println("5. 화재 감지 모드");
+        System.out.println("6. 관리자 로그아웃");
+        System.out.print(">>> 숫자 선택 (1 ~ 6) : ");
+        return key.nextInt();
+        
+        
+    }
+    public static int userUI(){
+    	Scanner key = new Scanner(System.in);
         System.out.println("사용자페이지입니다.");
+        System.out.println("1. 출입문 제어 기능");
+        System.out.println("2. 엘리베이터 제어 기능");
+        System.out.println("3. 호실 별 디바이스 제어 기능");
+        System.out.println("4. 주차장 제어 기능");
+        System.out.println("5. 화재 감지 모드");
+        System.out.println("6. 관리자 로그아웃");
+        System.out.print(">>> 숫자 선택 (1 ~ 6) : ");
+        return key.nextInt();
     }
 }
