@@ -12,6 +12,7 @@ import dto.MemberDTO;
 //import service.MemberServiceImpl;
 import service.UserService;
 import service.UserServiceImpl;
+import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
@@ -83,9 +84,10 @@ public class MainController {
     }
 	private void adminMenu() {
 		int input = MainUI.adminUI();
-//		AccessService accessService = new AccessServiceImpl();
+		AccessController accessController = new AccessController();
 		switch(input) {
 			case 1: // 출입
+				accessController.handleAccess(currentUser);
 				break;
 			case 2:
 				break;
@@ -101,9 +103,10 @@ public class MainController {
 	}
 	private void userMenu() {
 		int input = MainUI.adminUI();
-//		AccessService accessService = new AccessServiceImpl();
+		AccessController accessController = new AccessController();
 		switch(input) {
 			case 1: // 출입
+				accessController.handleAccess(currentUser);
 				break;
 			case 2:
 				break;

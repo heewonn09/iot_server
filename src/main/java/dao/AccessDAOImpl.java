@@ -6,41 +6,76 @@ import java.sql.*;
 
 public class AccessDAOImpl implements AccessDAO {
 
+	// 자신의 floor_no에 해당하는 사무실 출입 가능
     @Override
-    public boolean checkPermission(int userId, int deviceId) {
-        String sql = """
-            SELECT COUNT(*) 
-            FROM user_device_permissions 
-            WHERE user_id = ? AND device_id = ?
-        """;
-        try (Connection con = DBUtil.getConnect();
-             PreparedStatement ptmt = con.prepareStatement(sql)) {
-            ptmt.setInt(1, userId);
-            ptmt.setInt(2, deviceId);
-            ResultSet rs = ptmt.executeQuery();
-            if (rs.next()) return rs.getInt(1) > 0;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return false;
-    }
+    public boolean checkPermission(int userId, int targetOfficeId, int accessLevel) {
+    	String sql = """
+    	        SELECT u.office_id AS user_office, o.floor_no AS user_floor
+    	        FROM users u
+    	        LEFT JOIN offices o ON u.office_id = o.office_id
+    	        WHERE u.user_id = ?
+    	    """;
 
+    	    try (Connection conn = DBUtil.getConnect();
+    	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+    	        ps.setInt(1, userId);
+    	        ResultSet rs = ps.executeQuery();
+
+    	        if (rs.next()) {
+    	            int userOffice = rs.getInt("user_office");
+    	            int userFloor = rs.getInt("user_floor");
+
+    	            // 1️⃣ 전체 관리자: 모든 곳 출입 가능
+    	            if (accessLevel == 3) return true;
+
+    	            // 2️⃣ 층 관리자: 같은 층의 사무실이면 출입 가능
+    	            if (accessLevel == 2) {
+    	                String floorSql = "SELECT floor_no FROM offices WHERE office_id = ?";
+    	                try (PreparedStatement ps2 = conn.prepareStatement(floorSql)) {
+    	                    ps2.setInt(1, targetOfficeId);
+    	                    ResultSet rs2 = ps2.executeQuery();
+    	                    if (rs2.next()) {
+    	                        int targetFloor = rs2.getInt("floor_no");
+    	                        return userFloor == targetFloor;
+    	                    }
+    	                }
+    	            }
+
+    	            // 3️⃣ 일반 사용자: 자신의 사무실만 출입 가능
+    	            if (accessLevel == 1) {
+    	                return userOffice == targetOfficeId;
+    	            }
+    	        }
+
+    	    } catch (SQLException e) {
+    	        e.printStackTrace();
+    	    }
+    	    return false; // 기본적으로 출입 불가
+    	}
+    
+    // 출입 시도 기록
     @Override
-    public void insertAccessLog(AccessLogDTO dto) {
+    public boolean recordAccessEvent(AccessLogDTO log) {
         String sql = """
-            INSERT INTO event_log (user_id, device_id, office_id, event_action, note)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO event_log (device_id, user_id, office_id, event_type, event_action, value, timestamp, note)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """;
         try (Connection con = DBUtil.getConnect();
              PreparedStatement ptmt = con.prepareStatement(sql)) {
-            ptmt.setInt(1, dto.getUserId());
-            ptmt.setInt(2, dto.getDeviceId());
-            ptmt.setInt(3, dto.getOfficeId());
-            ptmt.setString(4, dto.getAction());
-            ptmt.setString(5, dto.getNote());
+            ptmt.setInt(1, log.getDeviceId());
+        	ptmt.setInt(2, log.getUserId());
+        	ptmt.setInt(3, log.getOfficeId());
+            ptmt.setString(4, log.getEventType());
+            ptmt.setString(5, log.getEventAction());
+            ptmt.setString(6, log.getValue());
+            ptmt.setTimestamp(7, log.getTimestamp());
+            ptmt.setString(8, log.getNote());
             ptmt.executeUpdate();
+            return true;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+        	e.printStackTrace();
+            return false;
         }
     }
 
