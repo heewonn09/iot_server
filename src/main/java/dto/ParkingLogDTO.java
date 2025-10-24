@@ -1,5 +1,7 @@
 package dto;
 
+import java.sql.Timestamp;
+
 public class ParkingLogDTO {
 	private int parkingId;
 	private int userId;
@@ -7,12 +9,13 @@ public class ParkingLogDTO {
 	private int durationMin;
 	private String action;
 	private String note;
-	private String inTime;
-	private String outTime;
+	private Timestamp inTime;
+	private Timestamp outTime;
+	private String location;
 	
 	
 	public ParkingLogDTO(int parkingId, int userId, int spaceId, int durationMin, String action, String note,
-			String inTime, String outTime) {
+			Timestamp inTime, Timestamp outTime, String location) {
 		super();
 		this.parkingId = parkingId;
 		this.userId = userId;
@@ -22,8 +25,9 @@ public class ParkingLogDTO {
 		this.note = note;
 		this.inTime = inTime;
 		this.outTime = outTime;
+		this.location = location;
 	}
-	ParkingLogDTO(){
+	public ParkingLogDTO(){
 		
 	}
 
@@ -87,23 +91,23 @@ public class ParkingLogDTO {
 	}
 
 
-	public String getInTime() {
+	public Timestamp getInTime() {
 		return inTime;
 	}
 
 
-	public void setInTime(String inTime) {
-		this.inTime = inTime;
+	public void setInTime(Timestamp timestamp) {
+		this.inTime = timestamp;
 	}
 
 
-	public String getOutTime() {
+	public Timestamp getOutTime() {
 		return outTime;
 	}
 
 
-	public void setOutTime(String outTime) {
-		this.outTime = outTime;
+	public void setOutTime(Timestamp timestamp) {
+		this.outTime = timestamp;
 	}
 
 
@@ -111,10 +115,13 @@ public class ParkingLogDTO {
 	public String toString() {
 		return "ParkingLogDTO [parkingId=" + parkingId + ", userId=" + userId + ", spaceId=" + spaceId
 				+ ", durationMin=" + durationMin + ", action=" + action + ", note=" + note + ", inTime=" + inTime
-				+ ", outTime=" + outTime + "]";
+				+ ", outTime=" + outTime + " location=" + location + " ]";
 	}
-	
-	
+	public void setLocation(String location) {
+		this.location = location;
+		
+	}
+
 	
 	
 	

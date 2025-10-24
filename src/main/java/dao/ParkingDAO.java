@@ -1,25 +1,20 @@
 package dao;
 
 import java.util.List;
-import dto.ParkingSpaceDTO;
+
 import dto.ParkingLogDTO;
-import dto.UserDTO;
+import dto.ParkingSpaceDTO;
 
 public interface ParkingDAO {
 
-	    // 1. 전체 주차공간 목록
-	    List<ParkingSpaceDTO> getAllSpaces();
+	 // 특정 사용자의 가장 최근 주차 상태
+    ParkingLogDTO getCurrentParkingStatus(int userId);
 
-	    // 2. 전체 자리수 / 사용중 자리수
-	    int getTotalSpaces();
-	    int getOccupiedCount();
+    // 특정 사용자의 전체 입출차 기록
+    List<ParkingLogDTO> getParkingLogsByUser(int userId);
 
-	    // 3. 차량 입출 이력 조회
-	    List<ParkingLogDTO> getParkingLogs();
-
-	    // 4. 특정 차량 검색
-	    UserDTO searchVehicle(String vehicleNo);
-	    
+    // 전체 주차 공간 조회 (관리자용)
+    List<ParkingSpaceDTO> getAllSpaces();
 	
 
 }

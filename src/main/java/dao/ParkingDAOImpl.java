@@ -3,102 +3,67 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 import DBUtil.DBUtil;
+import dto.ParkingLogDTO;
 import dto.ParkingSpaceDTO;
 
 public class ParkingDAOImpl implements ParkingDAO {
 
-    @Override
-    public List<ParkingSpaceDTO> getAllSpaces() {
-        String sql = """
-                SELECT space_id, location, is_occupied, last_update
-                FROM parking_space
-                ORDER BY space_id;
-                """;
-
-        Connection con = null;
-        PreparedStatement ptmt = null;
-        ResultSet rs = null;
-        List<ParkingSpaceDTO> list = new ArrayList<>();
-
-        try {
-            con = DBUtil.getConnect();
-            ptmt = con.prepareStatement(sql);
+	@Override
+	public ParkingLogDTO getCurrentParkingStatus(int userId) {
+		String sql = """
+				select p.*, s.location
+				from parking_log p
+				join parking_space s on p.space_id = s.space_id
+				where p.user_id = ?
+				order by p.in_time desc
+				limit 1
+				""";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		ResultSet rs = null;
+		ParkingLogDTO dto = null;
+		try {
+			
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+            ptmt.setInt(1, userId);
             rs = ptmt.executeQuery();
+            if(rs.next()) {
+			dto = new ParkingLogDTO();
+			dto.setParkingId(rs.getInt("parking_id"));
+            dto.setUserId(rs.getInt("user_id"));
+            dto.setSpaceId(rs.getInt("space_id"));
+            dto.setInTime(rs.getTimestamp("in_time"));
+            dto.setOutTime(rs.getTimestamp("out_time"));
+            dto.setAction(rs.getString("action"));
+            dto.setNote(rs.getString("note"));
+            dto.setLocation(rs.getString("location"));
+            
+		
+		}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, ptmt, con);
+		}
+		return dto;
+	}
 
-            while (rs.next()) {
-                ParkingSpaceDTO dto = new ParkingSpaceDTO();
-                dto.setSpaceId(rs.getInt("space_id"));
-                dto.setLocation(rs.getString("location"));
-                dto.setOccupied(rs.getBoolean("is_occupied"));
-                dto.setLastUpdate(rs.getTimestamp("last_update"));
+	@Override
+	public List<ParkingLogDTO> getParkingLogsByUser(int userId) {
+		
+		return null;
+	}
 
-                list.add(dto);
-            }
+	@Override
+	public List<ParkingSpaceDTO> getAllSpaces() {
+		
+		return null;
+	}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.close(rs, ptmt, con);
-        }
 
-        return list;
-    }
-
-    @Override
-    public int getTotalSpaces() {
-        String sql = "SELECT COUNT(*) FROM parking_space";
-        Connection con = null;
-        PreparedStatement ptmt = null;
-        ResultSet rs = null;
-        int count = 0;
-
-        try {
-            con = DBUtil.getConnect();
-            ptmt = con.prepareStatement(sql);
-            rs = ptmt.executeQuery();
-            if (rs.next()) count = rs.getInt(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.close(rs, ptmt, con);
-        }
-
-        return count;
-    }
-
-    @Override
-    public int getOccupiedCount() {
-        String sql = "SELECT COUNT(*) FROM parking_space WHERE is_occupied = TRUE";
-        Connection con = null;
-        PreparedStatement ptmt = null;
-        ResultSet rs = null;
-        int count = 0;
-
-        try {
-            con = DBUtil.getConnect();
-            ptmt = con.prepareStatement(sql);
-            rs = ptmt.executeQuery();
-            if (rs.next()) count = rs.getInt(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.close(rs, ptmt, con);
-        }
-
-        return count;
-    }
-
-    @Override
-    public List<dto.ParkingLogDTO> getParkingLogs() {
-        return null; // 나중에 로그 조회 구현
-    }
-
-    @Override
-    public dto.UserDTO searchVehicle(String vehicleNo) {
-        return null; // 나중에 차량 번호 검색 구현
-    }
 }
