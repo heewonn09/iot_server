@@ -64,6 +64,7 @@ public class HwAdminController {
                            
                         }
                         System.out.println("\n엔터를 누르면 관리자 메뉴로 돌아갑니다...");
+      
                         sc.nextLine();
                         
                     }
