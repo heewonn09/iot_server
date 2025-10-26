@@ -24,7 +24,6 @@ public class HwAdminController {
             System.out.println("3. 사용자 주차 이력 요약 보기");
             System.out.println("4. 상위 메뉴로 이동");
             System.out.print("메뉴 선택: ");
-            sc.nextLine();
             String choice = sc.nextLine();
 
             switch (choice) {
