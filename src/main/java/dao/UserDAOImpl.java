@@ -1,6 +1,6 @@
 package dao;
 
-import DBUtil.DBUtil;
+import util.DBUtil;
 import dto.MemberDTO;
 
 import java.sql.Connection;

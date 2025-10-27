@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import DBUtil.DBUtil;
+import util.DBUtil;
 import dto.ParkingDashboardDTO;
 import dto.ParkingSpaceDTO;
 import dto.ParkingSummaryDTO;

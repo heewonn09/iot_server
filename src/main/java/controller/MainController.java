@@ -1,24 +1,54 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Scanner;
-
-import javax.swing.JOptionPane;
 
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 //import dto.UserSessionDTO;
-//import mqtt.MqttManager;
 //import service.MemberService;
 //import service.MemberServiceImpl;
+import mqtt.MqttManager;
+import util.DeviceTypeList;
 import service.UserService;
 import service.UserServiceImpl;
-import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
-	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
+	private MemberDTO currentUser; // 현재 로그인한 사용자 정보
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
-//    private MqttManager mqttManager;
+    private MqttManager mqttManager;
+    private ArrayList<String> devices = DeviceTypeList.getDevices();
+
+    public MainController() {
+        currentUser = null;
+        mqttManager = new MqttManager();
+    }
+
+    // 브로커 서버와 연결, subscribe topic 설정
+    public void settingDevice(){
+        Thread mqttThread = new Thread(mqttManager);
+        mqttThread.start();
+        System.out.println("🚀 Main thread started MQTT connection thread.");
+
+        // 메인 스레드가 바로 종료되는 것을 방지하기 위해 잠시 대기
+        try {
+            // 스레드가 연결될 시간을 잠시 줍니다.
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // subscribe 정보 입력받기
+        // topic : {officeId}/{deviceType}/{deviceID}/state
+        // 주기적으로 받아야 할 센서 데이터들의 토픽을 넣는다.
+        for(int i=0;i<4;i++){ // officeId 는 0 ~ 3 범위
+            for (String deviceType : devices) {
+                mqttManager.subscribe(i+"/"+deviceType+"/+/state"); // 싱글레벨 와일드카드
+            }
+        }
+    }
+    
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -68,6 +98,7 @@ public class MainController {
     }
     
 	private void handleMainMenu() {
+        settingDevice(); // 이걸 어디다 배치를 해야지??
 		int role = currentUser.getAccess_level();
 		switch (role){
 	        case 3:
@@ -86,11 +117,13 @@ public class MainController {
 		int input = MainUI.adminUI();
 		AccessController accessController = new AccessController();
 		HwAdminController adminParkedController = new HwAdminController();
-		switch(input) {
+        switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
+                ElevatorController evController = new ElevatorController(currentUser,mqttManager);
+                evController.adminAccess();
 				break;
 			case 3:
 				break;
@@ -112,6 +145,8 @@ public class MainController {
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
+                ElevatorController evController = new ElevatorController(currentUser,mqttManager);
+                evController.userAccess();
 				break;
 			case 3:
 				break;

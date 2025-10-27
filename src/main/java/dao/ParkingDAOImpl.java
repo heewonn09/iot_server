@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import DBUtil.DBUtil;
+import util.DBUtil;
 import dto.ParkingLogDTO;
 import dto.ParkingSpaceDTO;
 
