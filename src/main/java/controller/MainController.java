@@ -1,21 +1,52 @@
 package controller;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import dto.LoginUserDTO;
 import dto.MemberDTO;
-//import dto.UserSessionDTO;
-//import mqtt.MqttManager;
-//import service.MemberService;
-//import service.MemberServiceImpl;
+import mqtt.MqttManager;
+import mqtt.devices.DHtHandler;
+import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
+import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
 	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
-//    private MqttManager mqttManager;
+    private MqttManager mqttManager;
+    private ElevatorController evController;
+
+
+    public MainController() {
+        currentUser = null;
+        mqttManager = new MqttManager();
+    }
+
+    // 브로커 서버와 연결, subscribe topic 설정
+    public void settingDevice(){
+        Thread mqttThread = new Thread(mqttManager);
+        mqttThread.start();
+        System.out.println("🚀 Main thread started MQTT connection thread.");
+
+        // 메인 스레드가 바로 종료되는 것을 방지하기 위해 잠시 대기
+        try {
+            // 스레드가 연결될 시간을 잠시 줍니다.
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 2. ✅ 각 전문 컨트롤러들을 생성하여 필요한 MqttManager를 주입 (의존성 주입)
+        evController = new ElevatorController(currentUser, mqttManager);
+        // DHtController dhtController = new DhtController(mqttManager); // 예시
+        // LedController ledController = new LedController(mqttManager); // 예시
+
+        System.out.println("✅ All device controllers have been initialized and listeners are set.");
+    }
+
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -65,6 +96,7 @@ public class MainController {
     }
     
 	private void handleMainMenu() {
+        settingDevice(); // 이걸 어디다 배치를 해야지??
 		int role = currentUser.getAccess_level();
 		switch (role){
 	        case 3:
@@ -89,6 +121,7 @@ public class MainController {
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
+                evController.adminAccess();
 				break;
 			case 3:
 				break;
@@ -112,6 +145,7 @@ public class MainController {
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
+                evController.userAccess();
 				break;
 			case 3:
 				break;

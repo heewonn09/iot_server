@@ -1,7 +1,7 @@
 package dao;
 
 import dto.AccessLogDTO;
-import DBUtil.DBUtil;
+import util.DBUtil;
 import java.sql.*;
 
 public class AccessDAOImpl implements AccessDAO {

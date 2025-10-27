@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 import dto.EnvironmentDTO;
 import dto.FireEventDTO;
-import DBUtil.DBUtil;
+import util.DBUtil;
 
 public class FireDAOImpl implements FireDAO {
 
