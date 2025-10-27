@@ -85,7 +85,7 @@ public class MainController {
 	private void adminMenu() {
 		int input = MainUI.adminUI();
 		AccessController accessController = new AccessController();
-		HwAdminController adminParkedController = new HwAdminController();
+		ParkedController adminParkedController = new ParkedController();
 		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
@@ -106,7 +106,7 @@ public class MainController {
 	private void userMenu() {
 		int input = MainUI.userUI();
 		AccessController accessController = new AccessController();
-		HwMainController userParkedController = new HwMainController();
+		ParkedController userParkedController = new ParkedController();
 		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
