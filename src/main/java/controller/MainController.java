@@ -35,7 +35,7 @@ public class MainController {
         System.out.println("=== 스마트 빌딩 시스템 ===");
         System.out.println("1. 로그인");
         System.out.println("2. 회원가입");
-        System.out.print(">>>> 선택 : ");
+        System.out.print(">>>> 선택 : ");	
         int sel = sc.nextInt();
         sc.nextLine(); // flush
 
@@ -92,6 +92,11 @@ public class MainController {
 			case 2:
 				break;
 			case 3:
+			    RoomDeviceController roomDevice = new RoomDeviceController();
+			    if (currentUser.getAccess_level() >= 2) // 관리자
+			        roomDevice.handleRoomDeviceAdmin();
+			    else
+			        roomDevice.handleRoomDeviceUser();
 				break;
 			case 4:
 				break;
@@ -111,7 +116,12 @@ public class MainController {
 			case 2:
 				break;
 			case 3:
-				break;
+			    RoomDeviceController roomDevice = new RoomDeviceController();
+			    if (currentUser.getAccess_level() >= 2) // 관리자
+			        roomDevice.handleRoomDeviceAdmin();
+			    else
+			        roomDevice.handleRoomDeviceUser();
+			    break;
 			case 4:
 				break;
 			case 5:
