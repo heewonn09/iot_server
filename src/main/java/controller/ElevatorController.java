@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dao.AccessDAOImpl;
 import dto.MemberDTO;
 import mqtt.MqttManager;
 import mqtt.devices.ELVHandler;
@@ -19,6 +20,7 @@ public class ElevatorController {
     private MqttManager mqttManager;
     // ✅ 1. 응답 데이터를 담을 Thread-safe Queue 생성
     private final BlockingQueue<String> responseQueue;
+    private int last_floor = 1;
 
     public ElevatorController(MemberDTO loginUser, MqttManager mqttManager) {
         this.loginUser = loginUser;
@@ -39,7 +41,6 @@ public class ElevatorController {
     // 관리자 권한으로 로그인 했을 때 사용되는 메서드
     public void adminAccess(){
         while (true){
-
             int input = view.adminUI();
             // 권한 관리 메뉴
             if(input == 1){
@@ -58,14 +59,20 @@ public class ElevatorController {
     // 사용자로 로그인했을 때 실행되는 메서드
     public void userAccess(){
         while(true){
-
             int input = view.userUI();
             // 엘리베이터 호출
             if(input == 1){
-
+                stateSelect();
+                int floor = view.floorControl();
+                boolean hasAccessLevel = checkUserAuth(floor);
+                if(hasAccessLevel){
+                    evService.callEVFloor(last_floor,floor);
+                    last_floor = floor;
+                }
             }
             else{
                 System.out.println("페이지를 종료합니다.");
+                break;
             }
         }
     }
@@ -77,8 +84,7 @@ public class ElevatorController {
         int input = view.authUI();
         switch (input){
             case 1: // 권한 목록 조회 (어떻게 보여줄건지?)
-                // 층별로 구분해서 보여줄건가?
-                // 회원 컬럼 중 어떤 값들을 보여줄건가?
+
                 break;
         }
     }
@@ -90,8 +96,7 @@ public class ElevatorController {
                 stateSelect();
                 break;
             case 2: //엘리베이터 이용 상태 변경
-                String result = view.stateSTOP();
-                System.out.println(result);
+                String result = view.stateSTOP().toLowerCase();
                 if(result.equals("y")){
                     System.out.println("엘리베이터 상태를 이용 가능으로 변경합니다.");
                     evService.setEVEnable(true);
@@ -104,16 +109,20 @@ public class ElevatorController {
             case 3: //엘리베이터 위치 제어(원격 제어)  //1-3 로직은 모두 MQTT 통신과 관련된 기능
                 stateSelect();
                 int floor = view.floorControl();
-                evService.setEVFloor(1,floor);
+                boolean hasAccessLevel = checkUserAuth(floor);
+                if(hasAccessLevel){
+                    evService.callEVFloor(last_floor,floor);
+                    last_floor = floor;
+                }
                 break;
             case 4: //엘리베이터 통계 리포트 (DB로그 확인)
-
+                evService.showELVLog();
                 break;
         }
     }
     private void stateSelect(){
         System.out.println("엘리베이터 상태 정보를 요청합니다...");
-        evService.getEVState();
+        evService.requestEVState();
         // 메인 스레드가 바로 실행되는 것을 방지하기 위해 잠시 대기
         try {
             // 스레드가 연결될 시간을 잠시 줍니다.
@@ -124,24 +133,42 @@ public class ElevatorController {
         // ✅ 큐에 데이터가 있는지 먼저 확인!
         checkMqttResponse();
     }
+    public boolean checkUserAuth(int floor){
+        boolean isAbleToCall = true;
+        System.out.println(loginUser.getName()+"님의 권한 확인 결과:");
+        switch (loginUser.getAccess_level()){
+            case 1:
+            case 2:
+                AccessDAOImpl accessDAO = new AccessDAOImpl();
+                int officeFloor = accessDAO.getOfficeFloor(loginUser.getOfficeId());
+                if(officeFloor != floor){
+                    System.out.println(floor+"층은 접근할 권한이 없습니다.");
+                    System.out.println("이전 화면으로 되돌아갑니다.");
+                    return false;
+                }
+        }
+        System.out.println("권한 확인되었습니다. 엘리베이터를 호출합니다.");
+        return true;
+    }
     private void checkMqttResponse() {
         String response = responseQueue.poll();
         if (response != null) {
-            System.out.println("\n[Controller] 큐에서 응답 발견! UI를 업데이트합니다.");
             // 여기서 Gson 등을 사용해 JSON 문자열을 객체로 변환할 수 있습니다.
              JsonObject obj = new Gson().fromJson(response, JsonObject.class);
              int floor = obj.get("from_floor").getAsInt();
              String actionStr = obj.get("action").getAsString();
-             boolean action=false;
+
              switch (actionStr){
                  case "enable":
-                     action = true;
-                     break;
                  case "disable":
-                     action = false;
+                     boolean action = actionStr.equals("enable") ? true:false;
+                     view.stateSELECT(1,obj.get("from_floor").getAsInt(),action);
                      break;
+                 case "arrive":
+                     view.stateARRIVE(obj.get("to_floor").getAsInt());
+                     break;
+
              }
-             view.stateSELECT(1,obj.get("from_floor").getAsInt(),action);
         }
     }
 }

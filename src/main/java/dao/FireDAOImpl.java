@@ -15,7 +15,7 @@ public class FireDAOImpl implements FireDAO {
             SELECT e.* FROM environment_data e
             JOIN devices d ON e.device_id = d.device_id
             WHERE d.office_id = ?
-            ORDER BY e.measured_at DESC LIMIT 5
+            ORDER BY e.measured_at
         """;
         try (Connection con = DBUtil.getConnect();
              PreparedStatement ps = con.prepareStatement(sql)) {

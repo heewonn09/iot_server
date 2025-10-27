@@ -17,7 +17,6 @@ public class DBUtil {
             props.load(fis);
 
             fis.close();
-            System.out.println("Properties 파일 로드 완료.");
 
         } catch (IOException e) {
             System.err.println("db.properties 파일을 찾거나 읽을 수 없습니다.");
