@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-import DBUtil.TimeUtil;
+import util.TimeUtil;
 import dao.OfficeDAO;
 import dto.EnvironmentDTO;
 import dto.FireEventDTO;

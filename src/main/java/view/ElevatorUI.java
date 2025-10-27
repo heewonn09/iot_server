@@ -41,12 +41,14 @@ public class ElevatorUI {
         return Integer.parseInt(key.nextLine());
     }
 
-    public void stateSELECT(int id, int floor, boolean isEnable){ // 상태 조회
+    public String stateSELECT(int id, int floor, boolean isEnable){ // 상태 조회
         String state = isEnable ? "이용 가능": "이용 불가";
         System.out.println("====== 엘리베이터 상태 조회 ======");
         System.out.println("E/V ID: "+ id);
         System.out.println("현 위치: "+ floor + "F");
         System.out.println("이용 여부: "+ state);
+        System.out.print("아무입력이나 실행하면 나가집니다.");
+        return key.nextLine();
     }
     public String stateSTOP(){ // 이용 정지
         System.out.println("======엘리베이터 상태 변경======");

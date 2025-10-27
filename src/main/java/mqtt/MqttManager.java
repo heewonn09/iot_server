@@ -1,11 +1,9 @@
 package mqtt;
 
-import com.google.gson.Gson;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +12,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MqttManager implements MqttCallback, Runnable { // MqttCallback을 직접 구현
+public class MqttManager implements MqttCallback, Runnable {
+
+    // ---- config 파일에서 가져온 BROKER 정보를 Properties로 가져오는 작업 ---- //
     private static final String PROPERTIES_FILE = "src/main/java/config/broker.properties";
     private static Properties props;
     static {
@@ -35,19 +35,18 @@ public class MqttManager implements MqttCallback, Runnable { // MqttCallback을 
     private final String broker;
     private final String clientId;
     private volatile boolean isConnected = false;
+    // ✅ 토픽별로 리스너 목록을 저장할 Map 선언
+    private final Map<String, List<OnMessageCallback>> topicListeners = new ConcurrentHashMap<>();
 
     public MqttManager() {
-        // broker server 변수 설정
+        // 생성자에서 broker server 변수 설정
         String broker_ip = props.getProperty("broker.ip");
         String broker_port = props.getProperty("broker.port");
         this.broker = "tcp://"+broker_ip+":"+broker_port;
         this.clientId = "java" + UUID.randomUUID().toString();
     }
 
-    // ✅ 1. 리스너들을 저장할 Map 추가 (Thread Safe 자료구조 -> ConcurrentHashMap 사용)
-    // Key: 토픽(Str), Value: 해당 토픽을 구독하는 리스너 리스트
-    private final Map<String, List<MqttTopicListener>> topicListeners = new ConcurrentHashMap<>();
-
+    // Thread 단위로 Mqtt Connect를 하는 작업, 메인 Thread와 구분됨
     @Override
     public void run() {
         try {
@@ -69,6 +68,7 @@ public class MqttManager implements MqttCallback, Runnable { // MqttCallback을 
             throw new RuntimeException(e);
         }
     }
+
     // 구독을 처리하는 메소드
     public void subscribe(String subTopic) {
         try {
@@ -107,20 +107,28 @@ public class MqttManager implements MqttCallback, Runnable { // MqttCallback을 
         }
     }
 
-    // ---- MqttTopicListener 인터페이스 관련 메서드들 ---- //
-    // ✅ 2. 리스너 등록 메서드
-    public void addListener(String topic, MqttTopicListener listener) {
-        // computeIfAbsent: topic 키가 없으면 새 리스트를 만들고, 있으면 기존 리스트를 반환
-        topicListeners.computeIfAbsent(topic, k -> new CopyOnWriteArrayList<>()).add(listener);
-        this.subscribe(topic); // 리스너가 등록되면 해당 토픽을 자동으로 구독
-        System.out.println("Listener added for topic: " + topic);
+    /**
+     * ✅ 특정 토픽에 대한 리스너(콜백)를 '추가'하는 메서드
+     * @param topic 수신할 토픽
+     * @param callback 해당 토픽의 메시지를 처리할 콜백
+     */
+    public void addListener(String topic, OnMessageCallback callback) {
+        // computeIfAbsent: Map에 topic 키가 없으면 새 리스트를 만들고, 있으면 기존 리스트 반환
+        topicListeners.computeIfAbsent(topic, k -> new CopyOnWriteArrayList<>()).add(callback);
+        // 리스너가 등록되면 해당 토픽을 자동으로 구독합니다.
+        this.subscribe(topic);
     }
 
-    // ✅ 3. 리스너 삭제 메서드
-    public void removeListener(String topic, MqttTopicListener listener) {
-        if (topicListeners.containsKey(topic)) {
-            topicListeners.get(topic).remove(listener);
-        }
+    /**
+     * MQTT 토픽이 와일드카드 패턴과 일치하는지 확인하는 헬퍼 메서드
+     * @param pattern 구독 패턴 (예: "office/+/sensor")
+     * @param topic 실제 발행된 토픽 (예: "office/1/sensor")
+     * @return 일치하면 true
+     */
+    private boolean topicMatches(String pattern, String topic) {
+        // 와일드카드 문자를 정규식(Regex)으로 변환하여 매칭
+        String regex = pattern.replace("+", "[^/]+").replace("#", ".+");
+        return topic.matches(regex);
     }
 
     // ---- MqttCallback 인터페이스의 메소드들 ---- //
@@ -134,31 +142,22 @@ public class MqttManager implements MqttCallback, Runnable { // MqttCallback을 
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         // 이 메소드는 메시지가 도착할 때마다 Paho 라이브러리에 의해 자동으로 호출됩니다.
         String msg = new String(message.getPayload());
-        System.out.println("\n=============== MESSAGE ARRIVED ===============");
-        System.out.println(" Topic: " + topic);
-        System.out.println(" Message: " + msg);
-        System.out.println("=============================================");
 
-        // ✅ 4. 더 이상 직접 처리하지 않음!
-        // 이 토픽에 등록된 리스너가 있는지 확인
-        if (topicListeners.containsKey(topic)) {
-            // 해당 토픽의 모든 리스너에게 메시지를 전달
-            for (MqttTopicListener listener : topicListeners.get(topic)) {
-                try {
-                    listener.onMessageReceived(topic, msg);
-                } catch (Exception e) {
-                    System.err.println("Error processing message in listener: " + e.getMessage());
-                    e.printStackTrace();
+        // ✅ 등록된 모든 리스너 패턴(Key)을 순회하며 매칭되는지 확인
+        for (String topicPattern : topicListeners.keySet()) {
+            if (topicMatches(topicPattern, topic)) {
+                System.out.printf("  -> Pattern '%s' matched. Executing listeners...\n", topicPattern);
+                // 매칭되는 패턴에 등록된 모든 리스너를 실행
+                for (OnMessageCallback listener : topicListeners.get(topicPattern)) {
+                    listener.handle(topic, msg);
                 }
             }
-        } else {
-            System.out.println("No listener registered for topic: " + topic);
         }
 
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-         System.out.println("Delivery complete.");
+         // System.out.println("Delivery complete.");
     }
 }

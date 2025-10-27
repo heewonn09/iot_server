@@ -1,7 +1,7 @@
 package dao;
 
 import java.sql.*;
-import DBUtil.DBUtil;
+import util.DBUtil;
 
 public class OfficeDAO {
 

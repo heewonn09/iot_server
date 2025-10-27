@@ -1,28 +1,24 @@
 package controller;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
-
-import javax.swing.JOptionPane;
 
 import dto.LoginUserDTO;
 import dto.MemberDTO;
-//import dto.UserSessionDTO;
-//import mqtt.MqttManager;
-//import service.MemberService;
-//import service.MemberServiceImpl;
 import mqtt.MqttManager;
-import util.DeviceTypeList;
+import mqtt.devices.DHtHandler;
+import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
-import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
 	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
     private MqttManager mqttManager;
-    private ArrayList<String> devices = DeviceTypeList.getDevices();
+    private ElevatorController evController;
+
 
     public MainController() {
         currentUser = null;
@@ -42,15 +38,12 @@ public class MainController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        // 2. ✅ 각 전문 컨트롤러들을 생성하여 필요한 MqttManager를 주입 (의존성 주입)
+        evController = new ElevatorController(currentUser, mqttManager);
+        // DHtController dhtController = new DhtController(mqttManager); // 예시
+        // LedController ledController = new LedController(mqttManager); // 예시
 
-        // subscribe 정보 입력받기
-        // topic : {officeId}/{deviceType}/{deviceID}/state
-        // 주기적으로 받아야 할 센서 데이터들의 토픽을 넣는다.
-        for(int i=0;i<4;i++){ // officeId 는 0 ~ 3 범위
-            for (String deviceType : devices) {
-                mqttManager.subscribe(i+"/"+deviceType+"/+/state"); // 싱글레벨 와일드카드
-            }
-        }
+        System.out.println("✅ All device controllers have been initialized and listeners are set.");
     }
 
     public void run() {
@@ -120,16 +113,12 @@ public class MainController {
 	private void adminMenu() {
 		int input = MainUI.adminUI();
 		AccessController accessController = new AccessController();
-		FireController fireController = new FireController();
 		ParkedController adminParkedController = new ParkedController();
 		switch(input) {
-		HwAdminController adminParkedController = new HwAdminController();
-        switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
-                ElevatorController evController = new ElevatorController(currentUser,mqttManager);
                 evController.adminAccess();
 				break;
 			case 3:
@@ -137,8 +126,7 @@ public class MainController {
 			case 4:
 				adminParkedController.adminParked(currentUser);
 				break;
-			case 5: // 관리자, 층 관리자 화재 모드 진입
-				fireController.handleFireMode(currentUser);
+			case 5:
 				break;
 			case 6:
 				break;
@@ -147,15 +135,12 @@ public class MainController {
 	private void userMenu() {
 		int input = MainUI.userUI();
 		AccessController accessController = new AccessController();
-		FireController fireController = new FireController();
 		ParkedController userParkedController = new ParkedController();
-        HwMainController userParkedController = new HwMainController();
-        switch(input) {
+		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
-                ElevatorController evController = new ElevatorController(currentUser,mqttManager);
                 evController.userAccess();
 				break;
 			case 3:
@@ -163,8 +148,7 @@ public class MainController {
 			case 4:
 				userParkedController.userhandleAccess(currentUser);
 				break;
-			case 5: // 일반 사용자용 화재 모드 진입
-				fireController.handleFireMode(currentUser);
+			case 5:
 				break;
 			case 6:
 				break;
