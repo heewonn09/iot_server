@@ -3,19 +3,23 @@ package controller;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 //import dto.UserSessionDTO;
+//import mqtt.MqttManager;
 //import service.MemberService;
 //import service.MemberServiceImpl;
 import mqtt.MqttManager;
 import util.DeviceTypeList;
 import service.UserService;
 import service.UserServiceImpl;
+import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
-	private MemberDTO currentUser; // 현재 로그인한 사용자 정보
+	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
     private MqttManager mqttManager;
     private ArrayList<String> devices = DeviceTypeList.getDevices();
@@ -48,7 +52,7 @@ public class MainController {
             }
         }
     }
-    
+
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -116,6 +120,9 @@ public class MainController {
 	private void adminMenu() {
 		int input = MainUI.adminUI();
 		AccessController accessController = new AccessController();
+		FireController fireController = new FireController();
+		ParkedController adminParkedController = new ParkedController();
+		switch(input) {
 		HwAdminController adminParkedController = new HwAdminController();
         switch(input) {
 			case 1: // 출입
@@ -130,7 +137,8 @@ public class MainController {
 			case 4:
 				adminParkedController.adminParked(currentUser);
 				break;
-			case 5:
+			case 5: // 관리자, 층 관리자 화재 모드 진입
+				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
 				break;
@@ -139,8 +147,10 @@ public class MainController {
 	private void userMenu() {
 		int input = MainUI.userUI();
 		AccessController accessController = new AccessController();
-		HwMainController userParkedController = new HwMainController();
-		switch(input) {
+		FireController fireController = new FireController();
+		ParkedController userParkedController = new ParkedController();
+        HwMainController userParkedController = new HwMainController();
+        switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
 				break;
@@ -153,7 +163,8 @@ public class MainController {
 			case 4:
 				userParkedController.userhandleAccess(currentUser);
 				break;
-			case 5:
+			case 5: // 일반 사용자용 화재 모드 진입
+				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
 				break;
