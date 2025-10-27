@@ -1,6 +1,7 @@
 package view;
 
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class ElevatorUI {
     Scanner key = new Scanner(System.in);
@@ -48,6 +49,11 @@ public class ElevatorUI {
         System.out.println("현 위치: "+ floor + "F");
         System.out.println("이용 여부: "+ state);
         System.out.print("아무입력이나 실행하면 나가집니다.");
+        return key.nextLine();
+    }
+    public String stateARRIVE(int floor){
+
+        System.out.println(floor+" 층에 도착했습니다.");
         return key.nextLine();
     }
     public String stateSTOP(){ // 이용 정지
