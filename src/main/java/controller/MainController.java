@@ -2,8 +2,6 @@ package controller;
 
 import java.util.Scanner;
 
-import javax.swing.JOptionPane;
-
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 //import dto.UserSessionDTO;
@@ -12,7 +10,6 @@ import dto.MemberDTO;
 //import service.MemberServiceImpl;
 import service.UserService;
 import service.UserServiceImpl;
-import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
@@ -106,7 +103,7 @@ public class MainController {
 	private void userMenu() {
 		int input = MainUI.userUI();
 		AccessController accessController = new AccessController();
-		HwMainController userParkedController = new HwMainController();
+		HwAdminController userParkedController = new HwAdminController();
 		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
