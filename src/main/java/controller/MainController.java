@@ -44,7 +44,7 @@ public class MainController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            ParkingHandler parkingHandler = new ParkingHandler(parkingDAO);
+            ParkingHandler parkingHandler = new ParkingHandler(parkingDAO, mqttManager);
             String parkingTopic = "parking/car/#";
             this.mqttManager.addListener(parkingTopic, parkingHandler);
 

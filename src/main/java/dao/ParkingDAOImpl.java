@@ -67,10 +67,10 @@ public class ParkingDAOImpl implements ParkingDAO {
         }
 
         @Override
-        public void processVehicleLog(String carNo, String action) {
+        public boolean processVehicleLog(String carNo, String action) {
                 if (carNo == null || carNo.trim().isEmpty()) {
                         System.out.println("🚗 차량 번호가 비어 있어 로그를 처리할 수 없습니다.");
-                        return;
+                        return false;
                 }
 
                 String normalizedAction = (action == null || action.trim().isEmpty()) ? "IN" : action.trim().toUpperCase();
@@ -89,26 +89,29 @@ public class ParkingDAOImpl implements ParkingDAO {
 
                         if (userId == null) {
                                 System.out.printf("🚫 차량 번호 %s 에 해당하는 등록 정보가 없습니다.%n", carNo);
-                                return;
+                                return false;
                         }
 
+                        boolean success = false;
                         switch (normalizedAction) {
                         case "IN":
-                                logVehicleEntry(con, userId, carNo);
+                                success = logVehicleEntry(con, userId, carNo);
                                 break;
                         case "OUT":
-                                logVehicleExit(con, userId, carNo);
+                                success = logVehicleExit(con, userId, carNo);
                                 break;
                         default:
                                 System.out.printf("⚠️ 지원하지 않는 차량 액션: %s%n", normalizedAction);
-                                return;
+                                return false;
                         }
+                        return success;
                 } catch (SQLException e) {
                         e.printStackTrace();
+                        return false;
                 }
         }
 
-        private void logVehicleEntry(Connection con, int userId, String carNo) throws SQLException {
+        private boolean logVehicleEntry(Connection con, int userId, String carNo) throws SQLException {
                 String insertSql = """
                                 INSERT INTO parking_log (user_id, space_id, action, note, in_time)
                                 VALUES (?, ?, 'IN', ?, NOW())
@@ -117,11 +120,11 @@ public class ParkingDAOImpl implements ParkingDAO {
                         insert.setInt(1, userId);
                         insert.setNull(2, Types.INTEGER);
                         insert.setString(3, buildNote("입차", carNo));
-                        insert.executeUpdate();
+                        return insert.executeUpdate() > 0;
                 }
         }
 
-        private void logVehicleExit(Connection con, int userId, String carNo) throws SQLException {
+        private boolean logVehicleExit(Connection con, int userId, String carNo) throws SQLException {
                 String findOpenSql = """
                                 SELECT parking_id, in_time
                                 FROM parking_log
@@ -149,7 +152,7 @@ public class ParkingDAOImpl implements ParkingDAO {
                                                 update.setInt(2, duration);
                                                 update.setString(3, buildNote("출차", carNo));
                                                 update.setInt(4, parkingId);
-                                                update.executeUpdate();
+                                                return update.executeUpdate() > 0;
                                         }
                                 } else {
                                         String insertOutSql = """
@@ -160,11 +163,12 @@ public class ParkingDAOImpl implements ParkingDAO {
                                                 insert.setInt(1, userId);
                                                 insert.setNull(2, Types.INTEGER);
                                                 insert.setString(3, buildNote("출차", carNo));
-                                                insert.executeUpdate();
+                                                return insert.executeUpdate() > 0;
                                         }
                                 }
                         }
                 }
+                return false;
         }
 
         private String buildNote(String prefix, String carNo) {
