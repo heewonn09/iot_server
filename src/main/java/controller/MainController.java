@@ -11,6 +11,7 @@ import mqtt.devices.DHtHandler;
 import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
+import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
@@ -113,6 +114,7 @@ public class MainController {
 	private void adminMenu() {
 		int input = MainUI.adminUI();
 		AccessController accessController = new AccessController();
+		FireController fireController = new FireController();
 		ParkedController adminParkedController = new ParkedController();
 		switch(input) {
 			case 1: // 출입
@@ -126,7 +128,8 @@ public class MainController {
 			case 4:
 				adminParkedController.adminParked(currentUser);
 				break;
-			case 5:
+			case 5: // 관리자, 층 관리자 화재 모드 진입
+				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
 				break;
@@ -135,6 +138,7 @@ public class MainController {
 	private void userMenu() {
 		int input = MainUI.userUI();
 		AccessController accessController = new AccessController();
+		FireController fireController = new FireController();
 		ParkedController userParkedController = new ParkedController();
 		switch(input) {
 			case 1: // 출입
@@ -148,7 +152,8 @@ public class MainController {
 			case 4:
 				userParkedController.userhandleAccess(currentUser);
 				break;
-			case 5:
+			case 5: // 일반 사용자용 화재 모드 진입
+				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
 				break;
