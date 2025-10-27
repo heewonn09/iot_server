@@ -9,7 +9,7 @@ import dto.ParkingDashboardDTO;
 import dto.ParkingSpaceDTO;
 import dto.ParkingSummaryDTO;
 
-public class HwAdminController {
+public class ParkedController {
 
     private final AdminParkingDAOImpl dao = new AdminParkingDAOImpl();
 
@@ -65,6 +65,7 @@ public class HwAdminController {
                            
                         }
                         System.out.println("\n엔터를 누르면 관리자 메뉴로 돌아갑니다...");
+      
                         sc.nextLine();
                         
                     }
@@ -78,9 +79,12 @@ public class HwAdminController {
             }
         }
         sc.close();
+        
+        
     }
-    private final UserDAOImpl dao2 = new UserDAOImpl();
+    
     public void userhandleAccess(MemberDTO currentUser) {
+    	final UserDAOImpl dao2 = new UserDAOImpl();
         Scanner sc = new Scanner(System.in);
        
         boolean running = true;
@@ -150,8 +154,5 @@ public class HwAdminController {
             }
         }
         sc.close();
-    }
-
-	}
-
-
+}
+}
