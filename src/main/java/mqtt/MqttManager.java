@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -19,7 +20,6 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MqttManager implements MqttCallback, Runnable {
 
-	
     // ---- config 파일에서 가져온 BROKER 정보를 Properties로 가져오는 작업 ---- //
     private static final String PROPERTIES_FILE = "src/main/java/config/broker.properties";
     private static Properties props;
@@ -99,7 +99,7 @@ public class MqttManager implements MqttCallback, Runnable {
             me.printStackTrace();
         }
     }
-    
+    //
     // 연결을 종료하는 메소드
     public void close() {
         try {
@@ -110,6 +110,24 @@ public class MqttManager implements MqttCallback, Runnable {
             e.printStackTrace();
         }
     }
+    
+ // 센서 데이터 구독
+ 	public void subscribeSensorData(IMqttMessageListener callback) {
+ 		try {
+ 			if (!isConnected) {
+ 				System.out.println("🔌 MQTT 재연결 시도...");
+ 				run();
+ 			}
+
+ 			if (isConnected) {
+ 				String sensorTopic = "office/+/sensor_data";
+ 				this.client.subscribe(sensorTopic, 1, callback);
+ 				System.out.println("📥 구독: " + sensorTopic);
+ 			}
+ 		} catch (MqttException e) {
+ 			System.err.println("❌ MQTT 구독 실패: " + e.getMessage());
+ 		}
+ 	}
 
     /**
      * ✅ 특정 토픽에 대한 리스너(콜백)를 '추가'하는 메서드
