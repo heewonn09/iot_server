@@ -35,11 +35,13 @@ public class ParkingHandler implements OnMessageCallback {
             }
 
            
-            boolean authorized = parkingDAO.processVehicleLog(dto.getCarNo(), dto.getAction());
+            boolean authorized = ParkingDAO.processVehicleLog(dto.getCarNo(), dto.getAction());
             publishGateCommand(dto.getCarNo(), authorized);
         } catch (JsonSyntaxException ex) {
             System.out.printf("⚠️ 차량 로그 JSON 파싱 실패: %s%n", ex.getMessage());
+            
         }
+        
     }
 
 

@@ -43,7 +43,6 @@ public class MqttManager implements MqttCallback, Runnable {
     private volatile boolean isConnected = false;
     // ✅ 토픽별로 리스너 목록을 저장할 Map 선언
     private final Map<String, List<OnMessageCallback>> topicListeners = new ConcurrentHashMap<>();
-
     public MqttManager() {
         // 생성자에서 broker server 변수 설정
         String broker_ip = props.getProperty("broker.ip");
