@@ -2,7 +2,7 @@ package mqtt;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import DBUtil.DBUtil;
+import util.DBUtil;
 import java.sql.*;
 
 public class SensorSubscriber implements IMqttMessageListener {

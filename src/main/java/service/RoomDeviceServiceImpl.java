@@ -8,29 +8,17 @@ import mqtt.SensorSubscriber;
 import java.util.List;
 
 public class RoomDeviceServiceImpl implements RoomDeviceService {
+	private MqttManager mqttManager;
+	private RoomDeviceDAO dao;
 
-	private RoomDeviceDAO dao = new RoomDeviceDAOImpl();
-	private static boolean mqttInitialized = false;
-
-	public RoomDeviceServiceImpl() {
-		if (!mqttInitialized) {
-			initializeMqtt();
-			mqttInitialized = true;
-		}
+	public RoomDeviceServiceImpl(MqttManager mqttManager) {
+		this.mqttManager = mqttManager;
+		dao = new RoomDeviceDAOImpl(this.mqttManager);
+		SensorSubscriber sensorListener = new SensorSubscriber();
+		this.mqttManager.subscribeSensorData(sensorListener);
+		System.out.println("✅ MQTT 초기화 완료");
 	}
 
-	private void initializeMqtt() {
-		try {
-			System.out.println("🚀 MQTT 초기화 중...");
-			MqttManager.connect();
-			SensorSubscriber sensorListener = new SensorSubscriber();
-			MqttManager.subscribeSensorData(sensorListener);
-			System.out.println("✅ MQTT 초기화 완료");
-		} catch (Exception e) {
-			System.err.println("❌ MQTT 초기화 오류: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public List<RoomDeviceDTO> getDeviceList(String room_name) {

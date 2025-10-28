@@ -1,6 +1,6 @@
 package dao;
 
-import DBUtil.DBUtil;
+import util.DBUtil;
 import dto.RoomDeviceDTO;
 import mqtt.MqttManager;
 import java.sql.*;
@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoomDeviceDAOImpl implements RoomDeviceDAO {
+	//생성자 만들어서 매개변수로 mqttManager 불러와야댐
+	private MqttManager mqttManager;
+	public RoomDeviceDAOImpl(MqttManager mqttManager) {
+		this.mqttManager = mqttManager;
+	}
 
 	@Override
 	public List<RoomDeviceDTO> selectByRoom(String room_name) {
@@ -167,15 +172,21 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 			String office = device_name.split(" ")[0];
 
 			if (device_name.contains("LED") || device_name.contains("조명")) {
-				MqttManager.publishLedControl(office, status);
+				String topic = "office/" + office + "/led";
+				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":1}";
+				mqttManager.publish(topic,message);
 				System.out.println("📡 LED 제어 MQTT 발행: " + device_name + " -> " + status);
 
 			} else if (device_name.contains("환풍") || device_name.contains("AC")) {
-				MqttManager.publishAcControl(office, status);
+				String topic = "office/" + office + "/ac";
+				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":2}";
+				mqttManager.publish(topic,message);
 				System.out.println("📡 AC 제어 MQTT 발행: " + device_name + " -> " + status);
 
 			} else if (device_name.contains("팬") || device_name.contains("쿨링") || device_name.contains("FAN")) {
-				MqttManager.publishFanControl(office, status);
+				String topic = "office/" + office + "/fan";
+				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":3}";
+				mqttManager.publish(topic,message);
 				System.out.println("📡 FAN 제어 MQTT 발행: " + device_name + " -> " + status);
 
 			} else {

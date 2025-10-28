@@ -1,15 +1,14 @@
 package controller;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
-
-import javax.swing.JOptionPane;
 
 import dto.LoginUserDTO;
 import dto.MemberDTO;
-//import dto.UserSessionDTO;
-//import mqtt.MqttManager;
-//import service.MemberService;
-//import service.MemberServiceImpl;
+import mqtt.MqttManager;
+import mqtt.devices.DHtHandler;
+import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
 import controller.AccessController;
@@ -18,7 +17,33 @@ import view.MainUI;
 public class MainController {
 	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
-//    private MqttManager mqttManager;
+    private MqttManager mqttManager;
+    private ElevatorController evController;
+
+
+    public MainController() {
+        currentUser = null;
+        mqttManager = new MqttManager();
+        settingDevice();
+    }
+
+    // 브로커 서버와 연결, subscribe topic 설정
+    public void settingDevice(){
+        Thread mqttThread = new Thread(mqttManager);
+        mqttThread.start();
+        System.out.println("🚀 Main thread started MQTT connection thread.");
+
+        // 메인 스레드가 바로 종료되는 것을 방지하기 위해 잠시 대기
+        try {
+            // 스레드가 연결될 시간을 잠시 줍니다.
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("✅ All device controllers have been initialized and listeners are set.");
+    }
+
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -68,6 +93,9 @@ public class MainController {
     }
     
 	private void handleMainMenu() {
+		if(evController==null) {
+			evController = new ElevatorController(currentUser, mqttManager);
+		}
 		int role = currentUser.getAccess_level();
 		switch (role){
 	        case 3:
@@ -85,46 +113,52 @@ public class MainController {
 	private void adminMenu() {
 		int input = MainUI.adminUI();
 		AccessController accessController = new AccessController();
+		FireController fireController = new FireController();
+		ParkedController adminParkedController = new ParkedController();
+		
 		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
+                evController.adminAccess();
 				break;
 			case 3:
-			    RoomDeviceController roomDevice = new RoomDeviceController();
-			    if (currentUser.getAccess_level() >= 2) // 관리자
-			        roomDevice.handleRoomDeviceAdmin();
-			    else
-			        roomDevice.handleRoomDeviceUser();
+			    RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
+		        roomDevice.handleRoomDeviceAdmin();
 				break;
 			case 4:
+				adminParkedController.adminParked(currentUser);
 				break;
-			case 5:
+			case 5: // 관리자, 층 관리자 화재 모드 진입
+				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
 				break;
 		}
 	}
 	private void userMenu() {
-		int input = MainUI.adminUI();
+		int input = MainUI.userUI();
 		AccessController accessController = new AccessController();
+		FireController fireController = new FireController();
+		ParkedController userParkedController = new ParkedController();
 		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
 				break;
 			case 2:
+                evController.userAccess();
 				break;
 			case 3:
-			    RoomDeviceController roomDevice = new RoomDeviceController();
-			    if (currentUser.getAccess_level() >= 2) // 관리자
-			        roomDevice.handleRoomDeviceAdmin();
-			    else
-			        roomDevice.handleRoomDeviceUser();
+			    RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
+			    
+		        roomDevice.handleRoomDeviceUser();
 			    break;
 			case 4:
+				userParkedController.userhandleAccess(currentUser);
 				break;
-			case 5:
+			case 5: // 일반 사용자용 화재 모드 진입
+				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
 				break;
@@ -133,6 +167,8 @@ public class MainController {
 	
 	private void logout() {
 		// TODO Auto-generated method stub
+		currentUser = null;
+		evController= null;
 		
 	}
 	private void exitProgram() {

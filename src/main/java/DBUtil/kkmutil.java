@@ -1,41 +1,28 @@
 package DBUtil;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.*;
-import java.util.Properties;
 
 public class kkmutil {
-    private static final String PROPERTIES_FILE = "src/main/java/config/db.properties";
-    private static Properties props;
+    
+    // ✅ 파일 없이 직접 입력
+    private static final String DB_IP = "127.0.0.1";
+    private static final String DB_PORT = "3306";
+    private static final String DB_NAME = "kkm";
+    private static final String DB_USER = "sample";
+    private static final String DB_PASSWORD = "1234";
 
-    static {
-        try {
-            FileInputStream fis = new FileInputStream(PROPERTIES_FILE);
-            props = new Properties();
-            props.load(fis);
-            fis.close();
-            System.out.println("Properties 파일 로드 완료.");
-        } catch (IOException e) {
-            System.err.println("db.properties 파일을 찾거나 읽을 수 없습니다.");
-            e.printStackTrace();
-        }
-    }
-
-    // DBMS 초기 연결
-    public static Connection getConnect() throws SQLException{
+    public static Connection getConnect() throws SQLException {
         Connection con = null;
-        String DB_ip = props.getProperty("db.ip");
-        String DB_port = props.getProperty("db.port");
-        String DB_name = props.getProperty("db.database");
-
-        String url = "jdbc:mysql://" + DB_ip + ":" + DB_port + "/" + DB_name + "?serverTimezone=UTC";
-        String user = props.getProperty("db.user");
-        String password = props.getProperty("db.password");
         
         try {
-            con = DriverManager.getConnection(url, user, password);
+            String url = "jdbc:mysql://" + DB_IP + ":" + DB_PORT + "/" + DB_NAME + "?serverTimezone=UTC";
+            
+            System.out.println("🔍 DB 연결 시도: " + url);
+            con = DriverManager.getConnection(url, DB_USER, DB_PASSWORD);
+            System.out.println("✅ DB 연결 성공!");
+            
         } catch (SQLException e) {
+            System.err.println("❌ DB 연결 오류: " + e.getMessage());
             e.printStackTrace();
         }
         return con;

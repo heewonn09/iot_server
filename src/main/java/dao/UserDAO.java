@@ -1,13 +1,17 @@
 package dao;
 
-import DBUtil.DBUtil;
 import dto.MemberDTO;
 
 public interface UserDAO {
-    public MemberDTO login(String id, String pw);
-    
+
+    MemberDTO login(String id, String pw);
+
+	MemberDTO getUserInfo(String userId);
+
+	boolean updateVehicle(String userId, String vehicleNo);
+
     public boolean register(String id, String pw, String name);
     
     
-    
 }
+

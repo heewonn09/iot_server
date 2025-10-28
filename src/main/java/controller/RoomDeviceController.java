@@ -3,13 +3,19 @@ package controller;
 import service.RoomDeviceService;
 import service.RoomDeviceServiceImpl;
 import dto.RoomDeviceDTO;
+import mqtt.MqttManager;
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class RoomDeviceController {
 	private Scanner sc = new Scanner(System.in);
-	private RoomDeviceService service = new RoomDeviceServiceImpl();
+	private MqttManager mqttManager;
+	private RoomDeviceService service;
+	public RoomDeviceController(MqttManager mqttManager) {
+		service = new RoomDeviceServiceImpl(mqttManager);
+	}
 
 	// 관리자용: 제어 가능
 	public void handleRoomDeviceAdmin() {

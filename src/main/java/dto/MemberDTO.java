@@ -10,13 +10,14 @@ public class MemberDTO {
     private String pass;
     private int access_level;
     private int officeId;
+    private String vehicleNo;
     private Boolean isActive;
     private Timestamp created_at;
 
     public MemberDTO() {
     }
 
-    public MemberDTO(int userId, String id, String name, String cardId, String pass, int access_level, int officeId, Boolean isActive, Timestamp created_at) {
+    public MemberDTO(int userId, String id, String name, String cardId, String pass, int access_level, int officeId, String vehicleNo,  Boolean isActive, Timestamp created_at) {
         this.userId = userId;
         this.id = id;
         this.name = name;
@@ -24,6 +25,7 @@ public class MemberDTO {
         this.pass = pass;
         this.access_level = access_level;
         this.officeId = officeId;
+        this.vehicleNo = vehicleNo;
         this.isActive = isActive;
         this.created_at = created_at;
     }
@@ -38,11 +40,18 @@ public class MemberDTO {
                 ", pass='" + pass + '\'' +
                 ", access_level=" + access_level +
                 ", officeId=" + officeId +
+                ", vehicleNo=" + vehicleNo +
                 ", isActive=" + isActive +
                 ", created_at=" + created_at +
                 '}';
     }
-
+    
+    public void setIsActive(boolean isActive) {
+    	this.isActive = isActive;
+    }
+    public boolean getIsActive() {
+    	return isActive;
+    }
     public int getUserId() {
         return userId;
     }
@@ -114,4 +123,16 @@ public class MemberDTO {
     public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
     }
+
+	public void setVehicle_no(String vehicleNo) {
+		this.vehicleNo = vehicleNo;
+		
+	}
+	public String getVehicle_no() {
+		return vehicleNo;
+		
+	}
+
+
+	
 }

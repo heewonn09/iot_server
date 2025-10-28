@@ -1,10 +1,8 @@
 package view;
 
-import dto.LoginUserDTO;
-import service.UserService;
-import service.UserServiceImpl;
-
 import java.util.Scanner;
+
+import dto.LoginUserDTO;
 
 public class MainUI {
     public LoginUserDTO loginUI(){
@@ -17,6 +15,8 @@ public class MainUI {
 
         return new LoginUserDTO(id, pw);
     }
+
+
     
     public String[] registerUI() {
         Scanner key = new Scanner(System.in);
@@ -28,6 +28,7 @@ public class MainUI {
         System.out.print("이름: ");
         String name = key.nextLine();
         return new String[]{id, pw, name};
+
     }
 
     public static int adminUI(){
