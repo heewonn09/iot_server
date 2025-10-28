@@ -11,6 +11,21 @@ import util.DBUtil;
 
 public class AccessDAOImpl implements AccessDAO {
 
+    @Override
+    public int getOfficeFloor(int OfficeId){
+        String sql = "SELECT floor_no FROM offices WHERE office_id = ?";
+        try (Connection conn = DBUtil.getConnect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, OfficeId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("floor_no");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 	// 자신의 floor_no에 해당하는 사무실 출입 가능
     @Override
     public boolean checkPermission(int userId, int targetOfficeId, int accessLevel) {
@@ -36,15 +51,8 @@ public class AccessDAOImpl implements AccessDAO {
 
     	            // 2️⃣ 층 관리자: 같은 층의 사무실이면 출입 가능
     	            if (accessLevel == 2) {
-    	                String floorSql = "SELECT floor_no FROM offices WHERE office_id = ?";
-    	                try (PreparedStatement ps2 = conn.prepareStatement(floorSql)) {
-    	                    ps2.setInt(1, targetOfficeId);
-    	                    ResultSet rs2 = ps2.executeQuery();
-    	                    if (rs2.next()) {
-    	                        int targetFloor = rs2.getInt("floor_no");
-    	                        return userFloor == targetFloor;
-    	                    }
-    	                }
+                        int targetFloor = getOfficeFloor(targetOfficeId);
+                        return userFloor == targetFloor;
     	            }
 
     	            // 3️⃣ 일반 사용자: 자신의 사무실만 출입 가능
