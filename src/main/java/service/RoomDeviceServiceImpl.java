@@ -16,7 +16,6 @@ public class RoomDeviceServiceImpl implements RoomDeviceService {
 		dao = new RoomDeviceDAOImpl(this.mqttManager);
 		SensorSubscriber sensorListener = new SensorSubscriber();
 		this.mqttManager.subscribeSensorData(sensorListener);
-		System.out.println("✅ MQTT 초기화 완료");
 	}
 
 

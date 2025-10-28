@@ -11,4 +11,5 @@ public interface AccessDAO {
     void showAllLogs();
     void listDevicesByOffice(int officeId);
     void listAllDevices();
+    public int getOfficeAccess(int officeId, String type);
 }

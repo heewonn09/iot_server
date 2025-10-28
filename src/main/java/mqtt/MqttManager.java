@@ -71,7 +71,6 @@ public class MqttManager implements MqttCallback, Runnable {
     public void subscribe(String subTopic) {
         try {
             this.client.subscribe(subTopic);
-            System.out.println("Subscribed to topic: " + subTopic);
         } catch (MqttException e) {
             e.printStackTrace();
         }

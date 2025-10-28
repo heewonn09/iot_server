@@ -36,7 +36,7 @@ public class ElevatorController {
         // ✅ 3. 자신의 토픽을 MqttManager에 리스너로 직접 등록!
         // officeId, deviceId 등은 설정 파일이나 loginUser 정보로부터 가져올 수 있습니다.
         String officeId = "1"; // 예시
-        String stateTopic = officeId + "/elevator/+/state";
+        String stateTopic = "+/elevator/+/state";
         this.mqttManager.addListener(stateTopic, handler);
     }
     // 관리자 권한으로 로그인 했을 때 사용되는 메서드

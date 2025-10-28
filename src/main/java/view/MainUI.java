@@ -1,8 +1,10 @@
 package view;
 
+import java.util.List;
 import java.util.Scanner;
 
 import dto.LoginUserDTO;
+import dto.OfficeDTO;
 
 public class MainUI {
     public LoginUserDTO loginUI(){
@@ -31,6 +33,14 @@ public class MainUI {
 
     }
 
+    public void showOfficeUI(List<OfficeDTO> list){
+        Scanner key = new Scanner(System.in);
+        int num =1 ;
+        for(OfficeDTO office : list){
+            System.out.println((num++)+". "+ office.getName()+", "+office.getFloorNo()+"층, Id: "+office.getOfficeId());
+        }
+    }
+
     public static int adminUI(){
     	Scanner key = new Scanner(System.in);
         System.out.println("관리자페이지입니다.");
@@ -53,7 +63,7 @@ public class MainUI {
         System.out.println("3. 호실 별 디바이스 제어 기능");
         System.out.println("4. 주차장 제어 기능");
         System.out.println("5. 화재 감지 모드");
-        System.out.println("6. 관리자 로그아웃");
+        System.out.println("6. 사용자 로그아웃");
         System.out.print(">>> 숫자 선택 (1 ~ 6) : ");
         return key.nextInt();
     }

@@ -16,9 +16,9 @@ public class UserServiceImpl implements UserService {
         return user;
     }
     @Override
-    public boolean register(String id, String pw, String name) {
+    public boolean register(String id, String pw, String name, int officeId) {
     	dao = new UserDAOImpl();
-    	boolean register = dao.register(id, pw, name);
+    	boolean register = dao.register(id, pw, name, officeId);
         return register;
 
     }

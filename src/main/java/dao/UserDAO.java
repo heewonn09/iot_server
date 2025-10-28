@@ -10,7 +10,7 @@ public interface UserDAO {
 
 	boolean updateVehicle(String userId, String vehicleNo);
 
-    public boolean register(String id, String pw, String name);
+    public boolean register(String id, String pw, String name,int officeId);
     
     
 }

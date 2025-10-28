@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import dao.OfficeDAO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
+import dto.OfficeDTO;
 import mqtt.MqttManager;
 import mqtt.devices.DHtHandler;
 import mqtt.devices.ELVHandler;
@@ -36,15 +38,10 @@ public class MainController {
         // 메인 스레드가 바로 종료되는 것을 방지하기 위해 잠시 대기
         try {
             // 스레드가 연결될 시간을 잠시 줍니다.
-            Thread.sleep(2000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-
-        System.out.println("✅ All device controllers have been initialized and listeners are set.");
-=======
->>>>>>> refs/remotes/origin/develop
     }
 
     public void run() {
@@ -89,8 +86,16 @@ public class MainController {
     }
     private void registerMenu() {
         String[] info = view.registerUI();
+        Scanner sc = new Scanner(System.in);
+
+        OfficeDAO dao = new OfficeDAO();
+        List<OfficeDTO> list = dao.getAllOfficeInfo();
+        view.showOfficeUI(list);
+        System.out.print("이용하려는 Office ID를 입력하세요: ");
+        int officeId = sc.nextInt();
+
         UserService serv = new UserServiceImpl();
-        boolean result = serv.register(info[0], info[1], info[2]);
+        boolean result = serv.register(info[0], info[1], info[2],officeId);
         if (result) {
             System.out.println("✅ 회원가입 완료! 로그인 후 이용해주세요.");
         } else {
@@ -99,7 +104,7 @@ public class MainController {
     }
     
 	private void handleMainMenu() {
-        // 2. ✅ 각 전문 컨트롤러들을 생성하여 필요한 MqttManager를 주입 (의존성 주입)
+        // Python -> Java 로 토픽 받을 디바이스에 관련된 topic을 subscribe하는 작업
         if(evController == null){
             evController = new ElevatorController(currentUser, mqttManager);
         }
@@ -119,8 +124,8 @@ public class MainController {
     }
 	private void adminMenu() {
 		int input = MainUI.adminUI();
-		AccessController accessController = new AccessController();
-		FireController fireController = new FireController();
+		AccessController accessController = new AccessController(mqttManager);
+		FireController fireController = new FireController(mqttManager);
 		ParkedController adminParkedController = new ParkedController();
 		
 		switch(input) {
@@ -147,8 +152,8 @@ public class MainController {
 	}
 	private void userMenu() {
 		int input = MainUI.userUI();
-		AccessController accessController = new AccessController();
-		FireController fireController = new FireController();
+		AccessController accessController = new AccessController(mqttManager);
+		FireController fireController = new FireController(mqttManager);
 		ParkedController userParkedController = new ParkedController();
 		switch(input) {
 			case 1: // 출입
@@ -175,16 +180,9 @@ public class MainController {
 	}
 	
 	private void logout() {
-		// TODO Auto-generated method stub
-<<<<<<< HEAD
 		currentUser = null;
 		evController= null;
-		
-=======
         System.out.println("로그아웃합니다.");
-        currentUser = null;
-        evController= null;
->>>>>>> refs/remotes/origin/develop
 	}
 	private void exitProgram() {
 		// TODO Auto-generated method stub

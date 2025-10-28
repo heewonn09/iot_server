@@ -85,6 +85,7 @@ public class RoomDeviceController {
 	}
 
 	// 사용자용: 조회만 가능
+    //
 	public void handleRoomDeviceUser() {
 		System.out.print("호실명 입력 (예: 101A): ");
 		String room_name = sc.nextLine();
@@ -130,7 +131,7 @@ public class RoomDeviceController {
 		if (selected.getDevice_type().equals("DHT")) {
 			System.out.println("온도: " + selected.getTemperature() + "°C");
 			System.out.println("습도: " + selected.getHumidity() + "%");
-		} else if (selected.getDevice_type().equals("FAN")) {
+		} else if (selected.getDevice_type().equals("HVAC")) {
 			System.out.println("현재상태: " + selected.getStatus());
 			System.out.println("📌 팬 자동 제어: 온도 ≥28°C 또는 습도 ≥50%일 때 자동 작동");
 		} else {
