@@ -2,9 +2,12 @@ package controller;
 
 import java.util.Scanner;
 
+import dao.ParkingDAO;
+import dao.ParkingDAOImpl;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import mqtt.MqttManager;
+import mqtt.devices.ParkingHandler;
 import service.UserService;
 import service.UserServiceImpl;
 import view.MainUI;
@@ -14,6 +17,8 @@ public class MainController {
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
     private MqttManager mqttManager;
     private ElevatorController evController;
+    private final ParkingDAO parkingDAO = new ParkingDAOImpl();
+    private boolean devicesInitialized = false;
 
 
     public MainController() {
@@ -36,11 +41,16 @@ public class MainController {
         }
         // 2. ✅ 각 전문 컨트롤러들을 생성하여 필요한 MqttManager를 주입 (의존성 주입)
         evController = new ElevatorController(currentUser, mqttManager);
+        ParkingHandler parkingHandler = new ParkingHandler(parkingDAO, mqttManager);
+        String parkingTopic = "parking/car/#";
+        this.mqttManager.addListener(parkingTopic, parkingHandler);
+
         // DHtController dhtController = new DhtController(mqttManager); // 예시
         // LedController ledController = new LedController(mqttManager); // 예시
 
         System.out.println("✅ All device controllers have been initialized and listeners are set.");
     }
+    
 
     public void run() {
         while (true) {

@@ -19,6 +19,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MqttManager implements MqttCallback, Runnable {
 
+	
     // ---- config 파일에서 가져온 BROKER 정보를 Properties로 가져오는 작업 ---- //
     private static final String PROPERTIES_FILE = "src/main/java/config/broker.properties";
     private static Properties props;
@@ -142,7 +143,9 @@ public class MqttManager implements MqttCallback, Runnable {
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost: " + cause.getMessage());
     }
-
+    public boolean isConnected() {
+        return this.client != null && this.client.isConnected();
+    }
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         // 이 메소드는 메시지가 도착할 때마다 Paho 라이브러리에 의해 자동으로 호출됩니다.
