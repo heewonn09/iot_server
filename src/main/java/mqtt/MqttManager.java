@@ -1,8 +1,5 @@
 package mqtt;
 
-import org.eclipse.paho.client.mqttv3.*;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +9,17 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 public class MqttManager implements MqttCallback, Runnable {
+
     // ---- config 파일에서 가져온 BROKER 정보를 Properties로 가져오는 작업 ---- //
     private static final String PROPERTIES_FILE = "src/main/java/config/broker.properties";
     private static Properties props;
@@ -36,7 +43,6 @@ public class MqttManager implements MqttCallback, Runnable {
     private volatile boolean isConnected = false;
     // ✅ 토픽별로 리스너 목록을 저장할 Map 선언
     private final Map<String, List<OnMessageCallback>> topicListeners = new ConcurrentHashMap<>();
-
     public MqttManager() {
         // 생성자에서 broker server 변수 설정
         String broker_ip = props.getProperty("broker.ip");
@@ -153,7 +159,9 @@ public class MqttManager implements MqttCallback, Runnable {
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost: " + cause.getMessage());
     }
-
+    public boolean isConnected() {
+        return this.client != null && this.client.isConnected();
+    }
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         // 이 메소드는 메시지가 도착할 때마다 Paho 라이브러리에 의해 자동으로 호출됩니다.
