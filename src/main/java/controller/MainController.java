@@ -18,7 +18,7 @@ public class MainController {
 	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
     private MqttManager mqttManager;
-    private ElevatorController evController;
+    private ElevatorController evController=null;
 
 
     public MainController() {
@@ -40,8 +40,11 @@ public class MainController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+<<<<<<< HEAD
 
         System.out.println("✅ All device controllers have been initialized and listeners are set.");
+=======
+>>>>>>> refs/remotes/origin/develop
     }
 
     public void run() {
@@ -67,7 +70,10 @@ public class MainController {
         switch (sel) {
             case 1 -> loginMenu();
             case 2 -> registerMenu();
-            default -> System.out.println("잘못된 입력입니다.");
+            default -> {
+                System.out.println("잘못된 입력입니다. 프로그램을 종료합니다.");
+                exitProgram();
+            }
         }
     }
     
@@ -93,9 +99,10 @@ public class MainController {
     }
     
 	private void handleMainMenu() {
-		if(evController==null) {
-			evController = new ElevatorController(currentUser, mqttManager);
-		}
+        // 2. ✅ 각 전문 컨트롤러들을 생성하여 필요한 MqttManager를 주입 (의존성 주입)
+        if(evController == null){
+            evController = new ElevatorController(currentUser, mqttManager);
+        }
 		int role = currentUser.getAccess_level();
 		switch (role){
 	        case 3:
@@ -134,6 +141,7 @@ public class MainController {
 				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
+                logout();
 				break;
 		}
 	}
@@ -161,18 +169,25 @@ public class MainController {
 				fireController.handleFireMode(currentUser);
 				break;
 			case 6:
+                logout();
 				break;
 		}
 	}
 	
 	private void logout() {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
 		currentUser = null;
 		evController= null;
 		
+=======
+        System.out.println("로그아웃합니다.");
+        currentUser = null;
+        evController= null;
+>>>>>>> refs/remotes/origin/develop
 	}
 	private void exitProgram() {
 		// TODO Auto-generated method stub
-		
+		System.exit(0);
 	}
 }

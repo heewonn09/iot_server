@@ -50,8 +50,7 @@ public class MqttManager implements MqttCallback, Runnable {
     public void run() {
         try {
             this.client = new MqttClient(this.broker, this.clientId, new MemoryPersistence());
-            System.out.println("Connecting to broker: " + this.broker);
-            System.out.println("clientId: "+this.clientId);
+            System.out.println("Connecting to broker server: " + this.broker);
             // 연결 옵션 설정
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
