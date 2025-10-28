@@ -11,4 +11,5 @@ public interface FireDAO {
     void insertFireEvent(FireEventDTO event);
     List<FireEventDTO> getRecentFireLogs();
     List<FireEventDTO> getFireLogsByOffice(int officeId);
+	EnvironmentDTO getLatestByOffice(int officeId);
 }
