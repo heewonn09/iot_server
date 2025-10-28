@@ -40,6 +40,11 @@ public class MainController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+<<<<<<< HEAD
+
+        System.out.println("✅ All device controllers have been initialized and listeners are set.");
+=======
+>>>>>>> refs/remotes/origin/develop
     }
 
     public void run() {
@@ -58,7 +63,7 @@ public class MainController {
         System.out.println("=== 스마트 빌딩 시스템 ===");
         System.out.println("1. 로그인");
         System.out.println("2. 회원가입");
-        System.out.print(">>>> 선택 : ");
+        System.out.print(">>>> 선택 : ");	
         int sel = sc.nextInt();
         sc.nextLine(); // flush
 
@@ -117,6 +122,7 @@ public class MainController {
 		AccessController accessController = new AccessController();
 		FireController fireController = new FireController();
 		ParkedController adminParkedController = new ParkedController();
+		
 		switch(input) {
 			case 1: // 출입
 				accessController.handleAccess(currentUser);
@@ -125,6 +131,8 @@ public class MainController {
                 evController.adminAccess();
 				break;
 			case 3:
+			    RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
+		        roomDevice.handleRoomDeviceAdmin();
 				break;
 			case 4:
 				adminParkedController.adminParked(currentUser);
@@ -150,7 +158,10 @@ public class MainController {
                 evController.userAccess();
 				break;
 			case 3:
-				break;
+			    RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
+			    
+		        roomDevice.handleRoomDeviceUser();
+			    break;
 			case 4:
 				userParkedController.userhandleAccess(currentUser);
 				break;
@@ -165,9 +176,15 @@ public class MainController {
 	
 	private void logout() {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
+		currentUser = null;
+		evController= null;
+		
+=======
         System.out.println("로그아웃합니다.");
         currentUser = null;
         evController= null;
+>>>>>>> refs/remotes/origin/develop
 	}
 	private void exitProgram() {
 		// TODO Auto-generated method stub
