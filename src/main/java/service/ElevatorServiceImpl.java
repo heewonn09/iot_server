@@ -1,12 +1,9 @@
 package service;
 
 import com.google.gson.Gson;
-<<<<<<< HEAD
 
-=======
 import dao.ElevatorDAOImpl;
 import dto.ElevatorLogDTO;
->>>>>>> branch 'develop' of https://github.com/iot-building/iot_server.git
 import dto.MemberDTO;
 import dto.mqttMsg.MqttDeviceDTO;
 import dto.mqttMsg.MqttElevatorDTO;

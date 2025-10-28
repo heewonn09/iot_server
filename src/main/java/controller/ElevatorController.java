@@ -1,28 +1,21 @@
 package controller;
 
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-<<<<<<< HEAD
 
-=======
 import dao.AccessDAOImpl;
 import dao.ElevatorDAOImpl;
->>>>>>> branch 'develop' of https://github.com/iot-building/iot_server.git
+//github.com/iot-building/iot_server.git
 import dto.MemberDTO;
 import mqtt.MqttManager;
 import mqtt.devices.ELVHandler;
 import service.ElevatorService;
 import service.ElevatorServiceImpl;
 import view.ElevatorUI;
-
-<<<<<<< HEAD
-=======
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class ElevatorController {

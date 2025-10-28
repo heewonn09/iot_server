@@ -9,8 +9,9 @@ public interface ParkingDAO {
     public ParkingLogDTO getCurrentParkingStatus(int userId);
     public List<ParkingLogDTO> getParkingLogsByUser(int userId);
     public List<ParkingSpaceDTO> getAllSpaces();
-    static void processVehicleLog(String carNo, String action) {
+    static boolean processVehicleLog(String carNo, String action) {
 		// TODO Auto-generated method stub
+    	return false;
 		
 	}
 	public static boolean checkCarRegistered(String carNo) {
