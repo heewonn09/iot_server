@@ -3,6 +3,7 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dao.AccessDAOImpl;
+import dao.ElevatorDAOImpl;
 import dto.MemberDTO;
 import mqtt.MqttManager;
 import mqtt.devices.ELVHandler;
@@ -10,6 +11,7 @@ import service.ElevatorService;
 import service.ElevatorServiceImpl;
 import view.ElevatorUI;
 
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -26,7 +28,7 @@ public class ElevatorController {
         this.loginUser = loginUser;
         this.view = new ElevatorUI();
         this.mqttManager = mqttManager;
-        this.evService = new ElevatorServiceImpl(loginUser,mqttManager);
+        this.evService = new ElevatorServiceImpl(loginUser,mqttManager,1,4);
         this.responseQueue = new LinkedBlockingQueue<>();
         // ✅ 2. 자신의 핸들러를 생성하고, 큐를 전달
         ELVHandler handler = new ELVHandler(this.responseQueue);
@@ -34,7 +36,6 @@ public class ElevatorController {
         // ✅ 3. 자신의 토픽을 MqttManager에 리스너로 직접 등록!
         // officeId, deviceId 등은 설정 파일이나 loginUser 정보로부터 가져올 수 있습니다.
         String officeId = "1"; // 예시
-        String deviceId = "1"; // 예시
         String stateTopic = officeId + "/elevator/+/state";
         this.mqttManager.addListener(stateTopic, handler);
     }
@@ -82,10 +83,13 @@ public class ElevatorController {
         // => 결론: access_level: 1-2 인 경우, 해당 office_id 에 대해서 office_id 의 floor 에 대한 엘리베이터 권한을 갖는 것임.
         // 3인 경우, 모든 floor 에 대한 엘리베이터 권한을 가짐.
         int input = view.authUI();
-        switch (input){
-            case 1: // 권한 목록 조회 (어떻게 보여줄건지?)
-
-                break;
+        if(input==1){
+            ElevatorDAOImpl dao = new ElevatorDAOImpl();
+            Map<MemberDTO,Integer> map = dao.showUserOffice();
+            view.showEVUser(map);
+        }
+        else{
+            System.out.println();
         }
     }
 
@@ -162,12 +166,8 @@ public class ElevatorController {
                  case "enable":
                  case "disable":
                      boolean action = actionStr.equals("enable") ? true:false;
-                     view.stateSELECT(1,obj.get("from_floor").getAsInt(),action);
+                     view.stateSELECT(1,floor,action);
                      break;
-                 case "arrive":
-                     view.stateARRIVE(obj.get("to_floor").getAsInt());
-                     break;
-
              }
         }
     }
