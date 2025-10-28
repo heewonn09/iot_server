@@ -14,11 +14,15 @@ public class ElevatorServiceImpl implements ElevatorService{
     private MemberDTO loginUser;
     private MqttManager mqttManager;
     private Gson gson;
+    private String topic;
 
-    public ElevatorServiceImpl(MemberDTO loginUser, MqttManager mqttManager) {
+
+    public ElevatorServiceImpl(MemberDTO loginUser, MqttManager mqttManager,int officeId, int deviceId) {
         this.loginUser = loginUser;
         this.mqttManager = mqttManager;
         this.gson = new Gson();
+        this.topic = officeId+"/"+"elevator"+"/"+deviceId+"/";
+
     }
 
     @Override
@@ -28,7 +32,7 @@ public class ElevatorServiceImpl implements ElevatorService{
         int userId = loginUser.getUserId();
         MqttDeviceDTO dto = new MqttDeviceDTO(action,isActive,userId);
         String msg = gson.toJson(dto);
-        String topic = "1/elevator/ev1/cmd";
+        String topic = this.topic+"cmd";
         mqttManager.publish(topic,msg);
     }
 
@@ -38,7 +42,7 @@ public class ElevatorServiceImpl implements ElevatorService{
         int userId = loginUser.getUserId();
         MqttDeviceDTO dto = new MqttDeviceDTO(action,isEnable,userId);
         String msg = gson.toJson(dto);
-        String topic = "1/elevator/ev1/cmd";
+        String topic = this.topic+"cmd";
         mqttManager.publish(topic,msg);
     }
 
@@ -48,14 +52,14 @@ public class ElevatorServiceImpl implements ElevatorService{
         int userId = loginUser.getUserId();
         MqttDeviceDTO dto = new MqttElevatorDTO(action,null,userId,start,end);
         String msg = gson.toJson(dto);
-        String topic = "1/elevator/ev1/cmd";
+        String topic = this.topic+"cmd";
         mqttManager.publish(topic,msg);
     }
 
     @Override
     public void showELVLog() {
         ElevatorDAOImpl elvDAO = new ElevatorDAOImpl();
-        List<ElevatorLogDTO> elvLogList = elvDAO.selectELVLog();
+        List<ElevatorLogDTO> elvLogList = elvDAO.showELVLog();
         if(elvLogList==null){
             System.out.println("======최근 엘리베이터를 이용한 기록이 존재하지 않습니다.======");
         }
@@ -65,5 +69,10 @@ public class ElevatorServiceImpl implements ElevatorService{
                 System.out.println(elvLog);
             }
         }
+    }
+
+    @Override
+    public void showUserFloor(){
+
     }
 }

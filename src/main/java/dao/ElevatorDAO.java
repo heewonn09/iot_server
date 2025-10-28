@@ -5,5 +5,5 @@ import dto.ElevatorLogDTO;
 import java.util.List;
 
 public interface ElevatorDAO {
-    public List<ElevatorLogDTO> selectELVLog();
+    public List<ElevatorLogDTO> showELVLog();
 }
