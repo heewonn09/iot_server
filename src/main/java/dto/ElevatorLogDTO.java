@@ -5,16 +5,14 @@ import java.sql.Timestamp;
 public class ElevatorLogDTO {
     private int elevator_id;
     private int user_id;
-    private int device_id;
     private int from_floor;
     private int to_floor;
     private String statue; // ENUM('CALLED','ARRIVED','DENIED') DEFAULT 'CALLED', -- 상태
     private Timestamp requested_at; // DEFAULT CURRENT_TIMESTAMP
 
-    public ElevatorLogDTO(int elevator_id, int user_id, int device_id, int from_floor, int to_floor, String statue, Timestamp requested_at) {
+    public ElevatorLogDTO(int elevator_id, int user_id,  int from_floor, int to_floor, String statue, Timestamp requested_at) {
         this.elevator_id = elevator_id;
         this.user_id = user_id;
-        this.device_id = device_id;
         this.from_floor = from_floor;
         this.to_floor = to_floor;
         this.statue = statue;
@@ -26,7 +24,6 @@ public class ElevatorLogDTO {
         return "ElevatorLogDTO{" +
                 "elevator_id=" + elevator_id +
                 ", user_id=" + user_id +
-                ", device_id=" + device_id +
                 ", from_floor=" + from_floor +
                 ", to_floor=" + to_floor +
                 ", statue='" + statue + '\'' +
@@ -48,14 +45,6 @@ public class ElevatorLogDTO {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
-    }
-
-    public int getDevice_id() {
-        return device_id;
-    }
-
-    public void setDevice_id(int device_id) {
-        this.device_id = device_id;
     }
 
     public int getFrom_floor() {

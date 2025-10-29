@@ -132,7 +132,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 			result = pstmt.executeUpdate();
 
 			if (result > 0) {
-				logDeviceControl(con, officeId, device_name, status);
+				//logDeviceControl(con, officeId, device_name, status);
 				publishMqtt(device_name, status);
 			}
 
@@ -145,14 +145,14 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 		return result;
 	}
 
-	private void logDeviceControl(Connection con, int room_id, String device_name, String status) {
-		String sql = "INSERT INTO event_log (office_id, device_id, event_action, controlled_by) VALUES (?, ?, ?, 'admin')";
+	private void logDeviceControl(Connection con, int room_id, int device_name, String status) {
+		String sql = "INSERT INTO event_log (office_id, device_id, event_action) VALUES (?, ?, ?)";
 		PreparedStatement pstmt = null;
 
 		try {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, room_id);
-			pstmt.setString(2, device_name);
+			pstmt.setInt(2, device_name);
 			pstmt.setString(3, status);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {

@@ -10,6 +10,7 @@ import dto.ParkingSpaceDTO;
 import dto.ParkingSummaryDTO;
 import mqtt.MqttManager;
 import mqtt.MqttSubClientParking;
+import util.ConsoleUtils;
 import util.TimeUtil;
 
 public class ParkedController {
@@ -35,6 +36,7 @@ public class ParkedController {
         boolean running = true;
 
         while (running) {
+        	ConsoleUtils.clearConsole();
         	System.out.println("\n" + WHITE_BOLD + "═══════════════════════════════════════════════════════" + RESET);
             System.out.println(BLUE + "🅰️ [관리자 주차 관리 메뉴]" + RESET);
             System.out.println("──────────────────────────────────────────────");
@@ -51,6 +53,7 @@ public class ParkedController {
 
             switch (choice) {
                 case "1" -> {
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                 	System.out.println("\n" + CYAN + "🚗 [주차 공간 상세 현황]" + RESET);
                     List<ParkingSpaceDTO> spaces = dao.getAllSpace(); // ✅ getAllSpace → getAllSpaces
@@ -64,6 +67,7 @@ public class ParkedController {
                     sc.nextLine();
                 }
                 case "2" -> {
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(BLUE + "📊 [시스템 대시보드]" + RESET);
                     System.out.println("──────────────────────────────────────────────");
@@ -74,6 +78,7 @@ public class ParkedController {
                     sc.nextLine();
                 }
                 case "3" -> {
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(PURPLE + "🧾 [사용자 주차 이력 요약]" + RESET);
                     System.out.println("──────────────────────────────────────────────");
@@ -101,6 +106,7 @@ public class ParkedController {
                 }
                 case "4" -> {
                     try {
+                    	ConsoleUtils.clearConsole();
                     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                         System.out.println(PURPLE + "🛰 [주차 센서 통신 스레드 시작...]" + RESET);
                         System.out.println("──────────────────────────────────────────────");
@@ -125,6 +131,7 @@ public class ParkedController {
                     }
                 }
                 case "5" -> {
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(RED + "🚪 관리자 메뉴를 종료하고 상위 메뉴로 이동합니다." + RESET);
                     System.out.println("═══════════════════════════════════════════════════════\n");
@@ -143,6 +150,7 @@ public class ParkedController {
        
         boolean running = true;
         while(running) {
+        	ConsoleUtils.clearConsole();
         	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
             System.out.println(CYAN_BOLD + "👥 [사용자 관리 메뉴]" + RESET);
             System.out.println("──────────────────────────────────────────────");
@@ -155,6 +163,7 @@ public class ParkedController {
 
             switch (choice) {
                 case "1":
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(CYAN_BOLD + "🔍 [사용자 정보 조회]" + RESET);
                     System.out.println("──────────────────────────────────────────────");
@@ -164,6 +173,7 @@ public class ParkedController {
                     MemberDTO dto = dao2.getUserInfo(inputId);
 
                     if (dto != null) {
+                    	ConsoleUtils.clearConsole();
                     	System.out.println(GREEN + "\n✅ 조회 성공!" + RESET);
                         System.out.println(WHITE_BOLD + "──────────────────────────────────────────────" + RESET);
                         System.out.println("🆔 회원번호: " + dto.getUserId());
@@ -188,6 +198,7 @@ public class ParkedController {
 
                 case "2":
                     // 차량 등록
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(CYAN_BOLD + "🚗 [차량 등록]" + RESET);
                     System.out.println("──────────────────────────────────────────────");
@@ -208,6 +219,7 @@ public class ParkedController {
                     break;
 
                 case "3":
+                	ConsoleUtils.clearConsole();
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(CYAN_BOLD + "⬆️ 상위 메뉴로 이동합니다." + RESET);
                     System.out.println("═══════════════════════════════════════════════════════\n");

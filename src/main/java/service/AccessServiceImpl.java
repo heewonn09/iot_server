@@ -1,5 +1,7 @@
 package service;
 
+import java.util.Scanner;
+
 import dao.AccessDAO;
 import dao.AccessDAOImpl;
 import dto.AccessLogDTO;
@@ -33,10 +35,14 @@ public class AccessServiceImpl implements AccessService {
                     {'action': 'open'}
                     """;
             mqttManager.publish(topic,content);
+            Scanner sc = new Scanner(System.in);
+            sc.nextLine();
         } else {
             System.out.println("❌ 출입 거부: 권한이 없습니다.");
             dao.recordAccessEvent(new AccessLogDTO(
                     getOfficeDeviceId, user.getUserId(), targetOfficeId, "ACCESS", "DENIED", "RFID 인증 실패", "출입 권한 없음"));
+            Scanner sc = new Scanner(System.in);
+            sc.nextLine();
         }		
 	}
 

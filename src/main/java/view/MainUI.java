@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import dto.LoginUserDTO;
 import dto.OfficeDTO;
+import util.ConsoleUtils;
 
 public class MainUI {
 	private static final String RESET = "\u001B[0m";
@@ -17,6 +18,7 @@ public class MainUI {
 	
     public LoginUserDTO loginUI(){
         Scanner key = new Scanner(System.in);
+        ConsoleUtils.clearConsole();
         System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(CYAN + "🔐 [스마트 빌딩 통합 로그인 시스템]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -34,6 +36,7 @@ public class MainUI {
     }
 
     public String[] registerUI() {
+    	ConsoleUtils.clearConsole();
         Scanner key = new Scanner(System.in);
         System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(PURPLE + "📝 [회원가입 페이지]" + RESET);
@@ -46,19 +49,20 @@ public class MainUI {
         String name = key.nextLine();
         System.out.println(GREEN + "✅ 회원가입 요청 중..." + RESET);
         System.out.println(WHITE_BOLD + "═══════════════════════════════════════════════════════" + RESET);
+    	key.nextLine();
         return new String[]{id, pw, name};
-
     }
 
     public void showOfficeUI(List<OfficeDTO> list){
         Scanner key = new Scanner(System.in);
         int num =1 ;
         for(OfficeDTO office : list){
-            System.out.println((num++)+". "+ office.getName()+", "+office.getFloorNo()+"층, Id: "+office.getOfficeId());
+            System.out.println(office.getName()+", "+office.getFloorNo()+"층 / Id : "+office.getOfficeId());
         }
     }
 
     public static int adminUI(){
+    	ConsoleUtils.clearConsole();
     	Scanner key = new Scanner(System.in);
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(CYAN + "👑 [관리자 페이지]" + RESET);
@@ -76,6 +80,7 @@ public class MainUI {
         
     }
     public static int userUI(){
+    	ConsoleUtils.clearConsole();
     	Scanner key = new Scanner(System.in);
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(GREEN + "🙋 [사용자 페이지]" + RESET);
