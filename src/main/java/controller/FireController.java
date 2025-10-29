@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
+import mqtt.MqttManager;
 import util.TimeUtil;
 import dao.OfficeDAO;
 import dto.EnvironmentDTO;
@@ -14,7 +15,14 @@ import service.FireService;
 import service.FireServiceImpl;
 
 public class FireController {
-    private final FireService service = new FireServiceImpl();
+    private MqttManager mqttManager;
+    private FireService service;
+
+    public FireController(MqttManager mqttManager) {
+        this.mqttManager = mqttManager;
+        this.service = new FireServiceImpl(this.mqttManager);
+    }
+
     private final Scanner sc = new Scanner(System.in);
 
     private double tempThreshold = 60.0;

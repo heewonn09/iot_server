@@ -15,12 +15,10 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	}
 
 	@Override
-	public List<RoomDeviceDTO> selectByRoom(String room_name) {
+	public List<RoomDeviceDTO> selectByRoom(int officeId,String officeName) {
 		// ✅ 수정: 기기별 1개씩만 선택 (GROUP BY type 사용)
 		String sql = "SELECT * FROM devices " +
-				"WHERE name LIKE ? AND type IN ('LED', 'DHT', 'FAN') " +
-				"GROUP BY type " +
-				"ORDER BY FIELD(type, 'LED', 'DHT', 'FAN')";
+				"WHERE office_id = ? AND type IN ('LED', 'DHT', 'HVAC')";
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -30,10 +28,9 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 		try {
 			con = DBUtil.getConnect();
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, room_name + "%");
-			
-			System.out.println("🔍 쿼리: " + sql);
-			System.out.println("🔍 검색: " + room_name);
+			pstmt.setInt(1, officeId);
+
+			System.out.println("🔍 검색: " + officeName);
 			rs = pstmt.executeQuery();
 			
 			int count = 0;
@@ -42,11 +39,11 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			while (rs.next()) {
 				count++;
-				int room_id = rs.getInt("room_id");
+				int id = rs.getInt("office_id");
 				String name = rs.getString("name");
 				String type = rs.getString("type");
 				String status = rs.getString("status");
-				System.out.println("🔍 데이터 " + count + ": " + name + " (" + type + ") = " + status);
+				System.out.println("🔍 데이터 " + count + ":  " + name + " (" + type + ") = " + status);
 
 				// ✅ DHT 타입이면 온습도 데이터를 모두 수집
 				if (type.equals("DHT")) {
@@ -56,11 +53,11 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			// ✅ 두 번째 쿼리: DHT 센서의 모든 데이터를 가져오기
 			String dhtSql = "SELECT * FROM devices " +
-					"WHERE name LIKE ? AND type = 'DHT' " +
+					"WHERE office_id = ? AND type = 'DHT' " +
 					"ORDER BY name";
 			
 			pstmt = con.prepareStatement(dhtSql);
-			pstmt.setString(1, room_name + "%");
+			pstmt.setInt(1, officeId);
 			rs = pstmt.executeQuery();
 			
 			System.out.println("\n🔍 DHT 센서 데이터 수집:");
@@ -84,13 +81,13 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			// ✅ 다시 한 번 GROUP BY 쿼리로 기본 정보 가져오기
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, room_name + "%");
+			pstmt.setInt(1, officeId);
 			rs = pstmt.executeQuery();
 			
 			count = 0;
 			while (rs.next()) {
 				count++;
-				int room_id = rs.getInt("room_id");
+				int room_id = rs.getInt("office_id");
 				String name = rs.getString("name");
 				String type = rs.getString("type");
 				String status = rs.getString("status");
@@ -120,8 +117,8 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	}
 
 	@Override
-	public int updateStatus(int room_id, String device_name, String status) {
-		String sql = "UPDATE devices SET status = ?, last_updated = CURRENT_TIMESTAMP WHERE room_id = ? AND name = ?";
+	public int updateStatus(int officeId, String device_name, String status) {
+		String sql = "UPDATE devices SET status = ?, last_updated = CURRENT_TIMESTAMP WHERE office_id = ? AND name = ?";
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int result = 0;
@@ -130,12 +127,12 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 			con = DBUtil.getConnect();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, status);
-			pstmt.setInt(2, room_id);
+			pstmt.setInt(2, officeId);
 			pstmt.setString(3, device_name);
 			result = pstmt.executeUpdate();
 
 			if (result > 0) {
-				logDeviceControl(con, room_id, device_name, status);
+				logDeviceControl(con, officeId, device_name, status);
 				publishMqtt(device_name, status);
 			}
 
@@ -149,7 +146,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	}
 
 	private void logDeviceControl(Connection con, int room_id, String device_name, String status) {
-		String sql = "INSERT INTO device_control_log (room_id, device_name, after_status, controlled_by) VALUES (?, ?, ?, 'admin')";
+		String sql = "INSERT INTO event_log (office_id, device_id, event_action, controlled_by) VALUES (?, ?, ?, 'admin')";
 		PreparedStatement pstmt = null;
 
 		try {

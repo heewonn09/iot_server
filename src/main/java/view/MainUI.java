@@ -1,8 +1,10 @@
 package view;
 
+import java.util.List;
 import java.util.Scanner;
 
 import dto.LoginUserDTO;
+import dto.OfficeDTO;
 
 public class MainUI {
 	private static final String RESET = "\u001B[0m";
@@ -46,6 +48,14 @@ public class MainUI {
         System.out.println(WHITE_BOLD + "═══════════════════════════════════════════════════════" + RESET);
         return new String[]{id, pw, name};
 
+    }
+
+    public void showOfficeUI(List<OfficeDTO> list){
+        Scanner key = new Scanner(System.in);
+        int num =1 ;
+        for(OfficeDTO office : list){
+            System.out.println((num++)+". "+ office.getName()+", "+office.getFloorNo()+"층, Id: "+office.getOfficeId());
+        }
     }
 
     public static int adminUI(){

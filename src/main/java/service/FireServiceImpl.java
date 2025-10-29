@@ -2,6 +2,7 @@ package service;
 
 import java.util.List;
 import java.util.Map;
+
 import dao.FireDAO;
 import dao.FireDAOImpl;
 import dto.EnvironmentDTO;
@@ -12,10 +13,8 @@ public class FireServiceImpl implements FireService {
     private final FireDAO dao = new FireDAOImpl();
     private MqttManager mqttManager;
     
-    public FireServiceImpl() {
-        this.mqttManager = new MqttManager();
-        Thread mqttThread = new Thread(this.mqttManager);
-        mqttThread.start();  // ✅ 반드시 실행해야 실제 연결이 됨
+    public FireServiceImpl(MqttManager mqttManager) {
+        this.mqttManager = mqttManager;
     }
 
     @Override

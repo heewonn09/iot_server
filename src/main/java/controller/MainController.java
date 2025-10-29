@@ -6,12 +6,14 @@ import java.util.Scanner;
 
 import dto.LoginUserDTO;
 import dto.MemberDTO;
+import dto.OfficeDTO;
 import mqtt.MqttManager;
 import mqtt.devices.DHtHandler;
 import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
 import controller.AccessController;
+import dao.OfficeDAO;
 import view.MainUI;
 
 public class MainController {
@@ -93,92 +95,102 @@ public class MainController {
         }
     }
     private void registerMenu() {
-        String[] info = view.registerUI();
+		String[] info = view.registerUI();
+        Scanner sc = new Scanner(System.in);
+
+        OfficeDAO dao = new OfficeDAO();
+        List<OfficeDTO> list = dao.getAllOfficeInfo();
+        view.showOfficeUI(list);
+        System.out.print("이용하려는 Office ID를 입력하세요: ");
+        int officeId = sc.nextInt();
+
+
         UserService serv = new UserServiceImpl();
-        boolean result = serv.register(info[0], info[1], info[2]);
-        if (result) {
-            System.out.println("✅ 회원가입 완료! 로그인 후 이용해주세요.");
-        } else {
-            System.out.println("❌ 회원가입 실패. 아이디 중복 또는 DB 오류입니다.");
-        }
-    }
+        boolean result = serv.register(info[0], info[1], info[2],officeId);
+		if (result) {
+			System.out.println("✅ 회원가입 완료! 로그인 후 이용해주세요.");
+		} else {
+			System.out.println("❌ 회원가입 실패. 아이디 중복 또는 DB 오류입니다.");
+		}
+	}
     
-	private void handleMainMenu() {
-        // 2. ✅ 각 전문 컨트롤러들을 생성하여 필요한 MqttManager를 주입 (의존성 주입)
+    private void handleMainMenu() {
+        // Python -> Java 로 토픽 받을 디바이스에 관련된 topic을 subscribe하는 작업
         if(evController == null){
-            evController = new ElevatorController(currentUser, mqttManager);
+            int officeId = 1;
+            int deviceId = 1;
+            evController = new ElevatorController(currentUser, mqttManager,officeId,deviceId);
         }
 		int role = currentUser.getAccess_level();
-		switch (role){
-	        case 3:
-	        case 2:
-	            adminMenu(); //관리자 페이지 이동
-	            break;
-	        case 1:
-	            userMenu(); //사용자 페이지 이동
-	            break;
-	        default:
-	            System.out.println("error");
-	            break;
-	    }
-    }
-	private void adminMenu() {
+		switch (role) {
+		case 3:
+		case 2:
+			adminMenu(); // 관리자 페이지 이동
+			break;
+		case 1:
+			userMenu(); // 사용자 페이지 이동
+			break;
+		default:
+			System.out.println("error");
+			break;
+		}
+	}
+    private void adminMenu() {
 		int input = MainUI.adminUI();
-		AccessController accessController = new AccessController();
-		FireController fireController = new FireController();
-		ParkedController adminParkedController = new ParkedController();
-		
-		switch(input) {
-			case 1: // 출입
-				accessController.handleAccess(currentUser);
-				break;
-			case 2:
-                evController.adminAccess();
-				break;
-			case 3:
-			    RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
-		        roomDevice.handleRoomDeviceAdmin();
-				break;
-			case 4:
-				adminParkedController.adminParked(currentUser);
-				break;
-			case 5: // 관리자, 층 관리자 화재 모드 진입
-				fireController.handleFireMode(currentUser);
-				break;
-			case 6:
-                logout();
-				break;
+		AccessController accessController = new AccessController(mqttManager);
+		FireController fireController = new FireController(mqttManager);
+		ParkedController adminParkedController = new ParkedController(mqttManager);
+
+		switch (input) {
+		case 1: // 출입
+			accessController.handleAccess(currentUser);
+			break;
+		case 2:
+			evController.adminAccess();
+			break;
+		case 3:
+			RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
+			roomDevice.handleRoomDeviceAdmin();
+			break;
+		case 4:
+			adminParkedController.adminParked(currentUser);
+			break;
+		case 5: // 관리자, 층 관리자 화재 모드 진입
+			fireController.handleFireMode(currentUser);
+			break;
+		case 6:
+			logout();
+			break;
 		}
 	}
 	private void userMenu() {
 		int input = MainUI.userUI();
-		AccessController accessController = new AccessController();
-		FireController fireController = new FireController();
-		ParkedController userParkedController = new ParkedController();
-		switch(input) {
-			case 1: // 출입
-				accessController.handleAccess(currentUser);
-				break;
-			case 2:
-                evController.userAccess();
-				break;
-			case 3:
-			    RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
-			    
-		        roomDevice.handleRoomDeviceUser();
-			    break;
-			case 4:
-				userParkedController.userhandleAccess(currentUser);
-				break;
-			case 5: // 일반 사용자용 화재 모드 진입
-				fireController.handleFireMode(currentUser);
-				break;
-			case 6:
-                logout();
-				break;
+		AccessController accessController = new AccessController(mqttManager);
+		FireController fireController = new FireController(mqttManager);
+		ParkedController userParkedController = new ParkedController(mqttManager);
+		switch (input) {
+		case 1: // 출입
+			accessController.handleAccess(currentUser);
+			break;
+		case 2:
+			evController.userAccess();
+			break;
+		case 3:
+			RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
+
+			roomDevice.handleRoomDeviceUser();
+			break;
+		case 4:
+			userParkedController.userhandleAccess(currentUser);
+			break;
+		case 5: // 일반 사용자용 화재 모드 진입
+			fireController.handleFireMode(currentUser);
+			break;
+		case 6:
+			logout();
+			break;
 		}
 	}
-	
 	private void logout() {
 		currentUser = null;
 		evController= null;

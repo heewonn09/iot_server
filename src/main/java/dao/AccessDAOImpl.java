@@ -1,11 +1,17 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import dto.AccessLogDTO;
 import util.DBUtil;
-import java.sql.*;
 
 public class AccessDAOImpl implements AccessDAO {
 
+    // office_id 에 따른 층 정보를 불러오는 메서드
     @Override
     public int getOfficeFloor(int OfficeId){
         String sql = "SELECT floor_no FROM offices WHERE office_id = ?";
@@ -15,6 +21,24 @@ public class AccessDAOImpl implements AccessDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt("floor_no");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    //officeId 값을 가진 devices 중 type이 door인 deviceId를 반환하는 메서드
+    @Override
+    public int getOfficeAccess(int officeId, String type){
+        String sql = "SELECT device_id FROM devices WHERE office_id = ? and type = ?";
+        try (Connection conn = DBUtil.getConnect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, officeId);
+            ps.setString(2,type);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("device_id");
             }
         }catch (SQLException e) {
             e.printStackTrace();

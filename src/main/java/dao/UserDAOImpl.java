@@ -1,12 +1,12 @@
 package dao;
 
-import util.DBUtil;
-import dto.MemberDTO;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import dto.MemberDTO;
+import util.DBUtil;
 
 public class UserDAOImpl implements UserDAO{
     @Override
@@ -98,14 +98,16 @@ public class UserDAOImpl implements UserDAO{
 
 	
     @Override
-    public boolean register(String id, String pw, String name) {
-        String sql = "INSERT INTO users VALUES (null,?,?,'card', ?, 1, null,'123car3333',1,default)";
+    public boolean register(String id, String pw, String name,int officeId) {
+        // 최초 회원가입 시 회원 등급은 1 (일반 사용자) 로 등록된다.
+        // 최초 회원가입 시 카드 ID, 차량 번호는 null로 입력된다 (추후 입력으로 업데이트)
+        String sql = "INSERT INTO users VALUES (null,?,?, default, ?, 1, ?,default,1,default)";
         try (Connection con = DBUtil.getConnect();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, id);
             ps.setString(2, name);
             ps.setString(3, pw);
-            
+            ps.setInt(4,officeId);
             int result = ps.executeUpdate();
             return result > 0;
         } catch (SQLException e) {

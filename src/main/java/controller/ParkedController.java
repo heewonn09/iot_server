@@ -8,10 +8,16 @@ import dto.MemberDTO;
 import dto.ParkingDashboardDTO;
 import dto.ParkingSpaceDTO;
 import dto.ParkingSummaryDTO;
+import mqtt.MqttManager;
+import mqtt.MqttSubClientParking;
 import util.TimeUtil;
 
 public class ParkedController {
-
+	
+	private MqttManager mqttManager;
+	public ParkedController(MqttManager mqttManager) {
+		this.mqttManager = mqttManager;
+    }
     private final AdminParkingDAOImpl dao = new AdminParkingDAOImpl();
  // ANSI 색상 코드 정의
     public static final String RESET = "\u001B[0m";
@@ -23,8 +29,8 @@ public class ParkedController {
     public static final String WHITE_BOLD = "\u001B[1;37m";
     public static final String PURPLE = "\u001B[35m";
     public static final String CYAN_BOLD = "\u001B[1;36m";
+    
     public void adminParked(MemberDTO currentUser) {
-
         Scanner sc = new Scanner(System.in);
         boolean running = true;
 
@@ -37,7 +43,8 @@ public class ParkedController {
             System.out.println("1️⃣ 주차 공간 상세 현황 보기");
             System.out.println("2️⃣ 시스템 대시보드 보기");
             System.out.println("3️⃣ 사용자 주차 이력 요약 보기");
-            System.out.println("4️⃣ 상위 메뉴로 이동");
+            System.out.println("4️⃣ 주차장 센서 활성화");
+            System.out.println("5️⃣️ 상위 메뉴로 이동");
             System.out.println("──────────────────────────────────────────────");
             System.out.print(YELLOW + "👉 메뉴 선택 >> " + RESET);
             String choice = sc.nextLine();
@@ -93,6 +100,31 @@ public class ParkedController {
                     }
                 }
                 case "4" -> {
+                    try {
+                    	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
+                        System.out.println(PURPLE + "🛰 [주차 센서 통신 스레드 시작...]" + RESET);
+                        System.out.println("──────────────────────────────────────────────");
+
+                        // ✅ 수신용 SubClient 실행 (차량 감지 로그 확인용)
+                        Thread subThread = new Thread(() -> {
+                            MqttSubClientParking sub = new MqttSubClientParking();
+                            sub.start();
+                        });
+                        subThread.setDaemon(true);
+                        subThread.start();
+
+                        // ✅ 파이썬으로 센서 활성화 명령 전송
+                        String topic = "1/parking/01/cmd";
+                        String msg = "{\"action\":\"activate\"}";
+                        mqttManager.publish(topic, msg);
+
+                        System.out.println("📤 MQTT Publish → " + topic + " : " + msg);
+                        System.out.println(GREEN + "✅ 주차장 센서 활성화 명령 전송 완료!" + RESET);
+                    } catch (Exception e) {
+                        System.out.println(RED + "❌ MQTT 전송 실패: " + e.getMessage() + RESET);
+                    }
+                }
+                case "5" -> {
                 	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
                     System.out.println(RED + "🚪 관리자 메뉴를 종료하고 상위 메뉴로 이동합니다." + RESET);
                     System.out.println("═══════════════════════════════════════════════════════\n");
@@ -103,8 +135,6 @@ public class ParkedController {
             }
         }
         sc.close();
-        
-        
     }
     
     public void userhandleAccess(MemberDTO currentUser) {
@@ -190,5 +220,6 @@ public class ParkedController {
             }
         }
         sc.close();
+    }
 }
-}
+    
