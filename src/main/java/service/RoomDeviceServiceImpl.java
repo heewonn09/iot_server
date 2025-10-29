@@ -17,13 +17,12 @@ public class RoomDeviceServiceImpl implements RoomDeviceService {
 		dao = new RoomDeviceDAOImpl(this.mqttManager);
 		SensorSubscriber sensorListener = new SensorSubscriber();
 		this.mqttManager.subscribeSensorData(sensorListener);
-		System.out.println("✅ MQTT 초기화 완료");
 	}
 
 
 	@Override
-	public List<RoomDeviceDTO> getDeviceList(String room_name) {
-		return dao.selectByRoom(room_name);
+	public List<RoomDeviceDTO> getDeviceList(int officeId,String officeName) {
+		return dao.selectByRoom(officeId,officeName);
 	}
 
 	@Override

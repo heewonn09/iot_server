@@ -18,6 +18,6 @@ public interface UserService {
     ParkingLogDTO getMyParkingStatus(String vehicleNo);
 
 
-    boolean register(String id, String pw, String name);
+    boolean register(String id, String pw, String name, int officeId);
 }
 

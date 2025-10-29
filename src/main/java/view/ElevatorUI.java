@@ -67,13 +67,6 @@ public class ElevatorUI {
         System.out.println(input);
         return input.toLowerCase();
     }
-    public int floorControl(){ //위치 제어
-        System.out.println("====== 엘리베이터 위치 제어 ======");
-        System.out.println("엘리베이터 상태를 조회합니다...");
-        // 상태 조회 기능 추가
-        System.out.print("이동할 층 입력(1-3)>>>>>");
-        return Integer.parseInt(key.nextLine());
-    }
     public void showEVUser(Map<MemberDTO,Integer> map){
         System.out.println("====== 엘리베이터 권한 조회======");
         System.out.println("층 별 엘리베이터 접근 권한을 보여줍니다....");
