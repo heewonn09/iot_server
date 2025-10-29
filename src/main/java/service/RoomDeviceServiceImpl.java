@@ -21,8 +21,8 @@ public class RoomDeviceServiceImpl implements RoomDeviceService {
 
 
 	@Override
-	public List<RoomDeviceDTO> getDeviceList(String room_name) {
-		return dao.selectByRoom(room_name);
+	public List<RoomDeviceDTO> getDeviceList(int officeId,String officeName) {
+		return dao.selectByRoom(officeId,officeName);
 	}
 
 	@Override

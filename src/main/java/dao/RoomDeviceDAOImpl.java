@@ -15,10 +15,10 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	}
 
 	@Override
-	public List<RoomDeviceDTO> selectByRoom(String room_name) {
+	public List<RoomDeviceDTO> selectByRoom(int officeId,String officeName) {
 		// ✅ 수정: 기기별 1개씩만 선택 (GROUP BY type 사용)
 		String sql = "SELECT * FROM devices " +
-				"WHERE name LIKE ? AND type IN ('LED', 'DHT', 'HVAC')";
+				"WHERE office_id = ? AND type IN ('LED', 'DHT', 'HVAC')";
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -28,9 +28,9 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 		try {
 			con = DBUtil.getConnect();
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, "%"+ room_name + "%");
+			pstmt.setInt(1, officeId);
 
-			System.out.println("🔍 검색: " + room_name);
+			System.out.println("🔍 검색: " + officeName);
 			rs = pstmt.executeQuery();
 			
 			int count = 0;
@@ -39,7 +39,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			while (rs.next()) {
 				count++;
-				int officeId = rs.getInt("office_id");
+				int id = rs.getInt("office_id");
 				String name = rs.getString("name");
 				String type = rs.getString("type");
 				String status = rs.getString("status");
@@ -53,11 +53,11 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			// ✅ 두 번째 쿼리: DHT 센서의 모든 데이터를 가져오기
 			String dhtSql = "SELECT * FROM devices " +
-					"WHERE name LIKE ? AND type = 'DHT' " +
+					"WHERE office_id = ? AND type = 'DHT' " +
 					"ORDER BY name";
 			
 			pstmt = con.prepareStatement(dhtSql);
-			pstmt.setString(1, "%"+ room_name + "%");
+			pstmt.setInt(1, officeId);
 			rs = pstmt.executeQuery();
 			
 			System.out.println("\n🔍 DHT 센서 데이터 수집:");
@@ -81,7 +81,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			// ✅ 다시 한 번 GROUP BY 쿼리로 기본 정보 가져오기
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, "%"+room_name + "%");
+			pstmt.setInt(1, officeId);
 			rs = pstmt.executeQuery();
 			
 			count = 0;

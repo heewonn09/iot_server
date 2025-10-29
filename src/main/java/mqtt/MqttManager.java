@@ -56,7 +56,6 @@ public class MqttManager implements MqttCallback, Runnable {
     public void run() {
         try {
             this.client = new MqttClient(this.broker, this.clientId, new MemoryPersistence());
-            System.out.println("Connecting to broker server: " + this.broker);
             // 연결 옵션 설정
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
@@ -65,7 +64,6 @@ public class MqttManager implements MqttCallback, Runnable {
             this.client.setCallback(this);
             this.client.connect(connOpts);
             this.isConnected = true;
-            System.out.println("✅ Broker Connected. Listening for messages...");
         } catch (MqttException e) {
             System.err.println("MQTT Connection Error!");
             this.isConnected = false;
@@ -89,7 +87,7 @@ public class MqttManager implements MqttCallback, Runnable {
             return; // 연결 안 됐으면 그냥 리턴
         }
         try {
-            System.out.println("Publishing message: " + content);
+            System.out.println("Publishing topic: "+topic+", message: " + content);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(1); // QoS Level 1
             this.client.publish(topic, message);

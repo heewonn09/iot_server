@@ -9,11 +9,8 @@ import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.OfficeDTO;
 import mqtt.MqttManager;
-import mqtt.devices.DHtHandler;
-import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
-import controller.AccessController;
 import view.MainUI;
 
 public class MainController {
@@ -88,8 +85,17 @@ public class MainController {
 
 	private void registerMenu() {
 		String[] info = view.registerUI();
-		UserService serv = new UserServiceImpl();
-		boolean result = serv.register(info[0], info[1], info[2]);
+        Scanner sc = new Scanner(System.in);
+
+        OfficeDAO dao = new OfficeDAO();
+        List<OfficeDTO> list = dao.getAllOfficeInfo();
+        view.showOfficeUI(list);
+        System.out.print("이용하려는 Office ID를 입력하세요: ");
+        int officeId = sc.nextInt();
+
+
+        UserService serv = new UserServiceImpl();
+        boolean result = serv.register(info[0], info[1], info[2],officeId);
 		if (result) {
 			System.out.println("✅ 회원가입 완료! 로그인 후 이용해주세요.");
 		} else {
@@ -100,7 +106,9 @@ public class MainController {
 	private void handleMainMenu() {
         // Python -> Java 로 토픽 받을 디바이스에 관련된 topic을 subscribe하는 작업
         if(evController == null){
-            evController = new ElevatorController(currentUser, mqttManager);
+            int officeId = 1;
+            int deviceId = 1;
+            evController = new ElevatorController(currentUser, mqttManager,officeId,deviceId);
         }
 		int role = currentUser.getAccess_level();
 		switch (role) {
