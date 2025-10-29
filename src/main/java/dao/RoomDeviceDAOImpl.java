@@ -17,7 +17,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	@Override
 	public List<RoomDeviceDTO> selectByRoom(String room_name) {
 		// ✅ 수정: 기기별 1개씩만 선택 (GROUP BY type 사용)
-		String sql = "SELECT * FROM device " +
+		String sql = "SELECT * FROM devices " +
 				"WHERE name LIKE ? AND type IN ('LED', 'DHT', 'FAN') " +
 				"GROUP BY type " +
 				"ORDER BY FIELD(type, 'LED', 'DHT', 'FAN')";
@@ -55,7 +55,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 			}
 
 			// ✅ 두 번째 쿼리: DHT 센서의 모든 데이터를 가져오기
-			String dhtSql = "SELECT * FROM device " +
+			String dhtSql = "SELECT * FROM devices " +
 					"WHERE name LIKE ? AND type = 'DHT' " +
 					"ORDER BY name";
 			
@@ -121,7 +121,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 	@Override
 	public int updateStatus(int room_id, String device_name, String status) {
-		String sql = "UPDATE device SET status = ?, last_updated = CURRENT_TIMESTAMP WHERE room_id = ? AND name = ?";
+		String sql = "UPDATE devices SET status = ?, last_updated = CURRENT_TIMESTAMP WHERE room_id = ? AND name = ?";
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int result = 0;

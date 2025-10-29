@@ -91,9 +91,6 @@ public class SensorSubscriber implements IMqttMessageListener {
             
             System.out.println("✅ 센서 데이터 DB 저장 완료 (온도: " + temperature + "°C, 습도: " + humidity + "%)");
             
-        } catch (SQLException e) {
-            System.err.println("❌ 센서 데이터 저장 실패: " + e.getMessage());
-            e.printStackTrace();
         } finally {
             DBUtil.close(null, null, con);
         }

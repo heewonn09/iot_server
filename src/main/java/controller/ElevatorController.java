@@ -28,7 +28,7 @@ public class ElevatorController {
         this.loginUser = loginUser;
         this.view = new ElevatorUI();
         this.mqttManager = mqttManager;
-        this.evService = new ElevatorServiceImpl(loginUser,mqttManager,1,4);
+        this.evService = new ElevatorServiceImpl(loginUser,mqttManager,1,1);
         this.responseQueue = new LinkedBlockingQueue<>();
         // ✅ 2. 자신의 핸들러를 생성하고, 큐를 전달
         ELVHandler handler = new ELVHandler(this.responseQueue);

@@ -61,8 +61,7 @@ public class FireServiceImpl implements FireService {
         dao.insertFireEvent(event);
         
         //String msg = String.format("🔥 화재 경보 발생 (user=%d, device=%d)", userId, deviceId);
-        System.out.printf("✅ Fire Event Logged: device_id=%d → action=%s%n", 
-                event.getDeviceId(), action);
+        //System.out.printf("✅ Fire Event Logged: device_id=%d → action=%s%n", event.getDeviceId(), action);
 
 		String topic;
 		String msg;
