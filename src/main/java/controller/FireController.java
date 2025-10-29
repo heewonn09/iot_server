@@ -154,6 +154,8 @@ public class FireController {
         System.out.println("📢 [안내] 모든 사용자에게 화재 알림을 전송 중...");
         System.out.println("──────────────────────────────────────────────");
 
+        mqttManager.publish("building/fire", "manual_trigger");
+        
         service.logEvent(user.getUserId(), 1, "FIRE", "MANUAL_TRIGGER", "관리자 수동 경보 발생");
 
         System.out.println(GREEN + "✅ 로그 기록 완료 및 MQTT 전송 요청 완료" + RESET);

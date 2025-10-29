@@ -28,7 +28,6 @@ public class ElevatorDAOImpl implements ElevatorDAO{
                 list.add(new ElevatorLogDTO(
                         rs.getInt("elevator_id"),
                         rs.getInt("user_id"),
-                        rs.getInt("device_id"),
                         rs.getInt("from_floor"),
                         rs.getInt("to_floor"),
                         rs.getString("status"),

@@ -24,8 +24,7 @@ public class ELVHandler implements OnMessageCallback {
                 case "enable":
                 case "disable":
                 case "arrive":
-                    System.out.println("[Handler] 상태 응답 수신. 큐에 추가합니다.");
-                    System.out.println(topic+" : "+payload);
+                  
                     queue.put(payload);
                     break;
             }

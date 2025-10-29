@@ -1,6 +1,7 @@
 package view;
 
 import dto.MemberDTO;
+import util.ConsoleUtils;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -18,6 +19,7 @@ public class ElevatorUI {
 	
     Scanner key = new Scanner(System.in);
     public int adminUI(){
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(CYAN + "👑 [관리자용 엘리베이터 제어 페이지]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -29,6 +31,7 @@ public class ElevatorUI {
         return Integer.parseInt(key.nextLine());
     }
     public int userUI(){
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(GREEN + "🙋 [회원용 엘리베이터 UI]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -39,6 +42,7 @@ public class ElevatorUI {
         return Integer.parseInt(key.nextLine());
     }
     public int authUI(){
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(BLUE + "🔒 [엘리베이터 권한 관리]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -52,6 +56,7 @@ public class ElevatorUI {
         return Integer.parseInt(key.nextLine());
     }
     public int stateUI(){
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(PURPLE + "⚙️ [엘리베이터 조작]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -74,7 +79,6 @@ public class ElevatorUI {
         System.out.printf("🏢 현 위치: %d층%n", floor);
         System.out.printf("🚪 이용 여부: %s%n", state);
         System.out.println("──────────────────────────────────────────────");
-        System.out.print(YELLOW + "👉 아무 키나 입력하면 나갑니다 >> " + RESET);
         return key.nextLine();
     }
     public String stateARRIVE(int floor){
@@ -83,6 +87,7 @@ public class ElevatorUI {
         return key.nextLine();
     }
     public String stateSTOP(){ // 이용 정지
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(RED + "⛔ [엘리베이터 이용 상태 변경]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -94,6 +99,7 @@ public class ElevatorUI {
         return input.toLowerCase();
     }
     public int floorControl(){ //위치 제어
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(PURPLE + "🕹️ [엘리베이터 위치 제어]" + RESET);
         System.out.println("──────────────────────────────────────────────");
@@ -102,6 +108,8 @@ public class ElevatorUI {
         return Integer.parseInt(key.nextLine());
     }
     public void showEVUser(Map<MemberDTO,Integer> map){
+    	Scanner sc = new Scanner(System.in);
+    	ConsoleUtils.clearConsole();
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(CYAN + "📋 [엘리베이터 접근 권한 조회]" + RESET);
         System.out.println("층 별 엘리베이터 접근 권한을 보여줍니다....");
@@ -126,6 +134,7 @@ public class ElevatorUI {
                     System.out.printf("권한: %s | 층: %-3d | 이름: %-10s | 아이디: %s\n", authName, floor, user.getName(), user.getId());
                 });
         System.out.println(WHITE_BOLD + "──────────────────────────────────────────────" + RESET);
+        sc.nextLine();
     }
 
 }

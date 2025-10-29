@@ -12,6 +12,7 @@ import mqtt.devices.DHtHandler;
 import mqtt.devices.ELVHandler;
 import service.UserService;
 import service.UserServiceImpl;
+import util.ConsoleUtils;
 import controller.AccessController;
 import dao.OfficeDAO;
 import view.MainUI;
@@ -63,6 +64,7 @@ public class MainController {
         }
     } 
     private void loginOrRegisterMenu() {
+    	ConsoleUtils.clearConsole();
         Scanner sc = new Scanner(System.in);
         System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
         System.out.println(CYAN + "🏢 [스마트 빌딩 통합 시스템]" + RESET);
@@ -85,13 +87,16 @@ public class MainController {
     }
     
     private void loginMenu() {
+    	Scanner sc = new Scanner(System.in);
     	LoginUserDTO loginInfo = view.loginUI();
     	UserService serv = new UserServiceImpl();
     	currentUser = serv.login(loginInfo.getId(), loginInfo.getPw());
     	if (currentUser == null) {
             System.out.println("❌ 로그인 실패. 아이디 혹은 비밀번호를 확인하세요.");
+            sc.nextLine();
         } else {
             System.out.printf("✅ 로그인 성공 (%s님, 등급:%d)%n", currentUser.getName(), currentUser.getAccess_level());
+            sc.nextLine();
         }
     }
     private void registerMenu() {
@@ -118,7 +123,7 @@ public class MainController {
         // Python -> Java 로 토픽 받을 디바이스에 관련된 topic을 subscribe하는 작업
         if(evController == null){
             int officeId = 1;
-            int deviceId = 1;
+            int deviceId = 14;
             evController = new ElevatorController(currentUser, mqttManager,officeId,deviceId);
         }
 		int role = currentUser.getAccess_level();

@@ -20,6 +20,12 @@ import view.ElevatorUI;
 
 
 public class ElevatorController {
+	final String RESET = "\u001B[0m";
+    final String WHITE_BOLD = "\u001B[1;37m";
+    final String CYAN = "\u001B[36m";
+    final String YELLOW = "\u001B[33m";
+    final String GREEN = "\u001B[32m";
+    final String RED = "\u001B[31m";
     private MemberDTO loginUser;
     private ElevatorUI view;
     private ElevatorService evService;
@@ -128,35 +134,45 @@ public class ElevatorController {
         checkMqttResponse();
     }
     public void floorControl(){
-        System.out.println("====== 엘리베이터 위치 제어 ======");
+        //System.out.println("====== 엘리베이터 위치 제어 ======");
         System.out.println("엘리베이터 상태를 조회합니다...");
         stateSelect(); // 상태 조회 기능 추가
         Scanner key = new Scanner(System.in);
-        System.out.print("현재 층 입력(1-3)>>>>>");
+        System.out.print(YELLOW + "현재 층 입력(1-3) >>>>> " + RESET);
         int start = Integer.parseInt(key.nextLine());
-        System.out.print("이동할 층 입력(1-3)>>>>>");
+        System.out.print(YELLOW + "이동할 층 입력(1-3) >>>>> " + RESET);
         int end = Integer.parseInt(key.nextLine());
 
-        boolean hasAccessLevel = checkUserAuth(end);
+        boolean hasAccessLevel = checkUserAuth(start, end);
         if(hasAccessLevel){
             evService.callEVFloor(start,end);
             last_floor = end;
         }
     }
-    public boolean checkUserAuth(int floor){
-        System.out.println(loginUser.getName()+"님의 권한 확인 결과:");
+    public boolean checkUserAuth(int start ,int end){
+    	Scanner key = new Scanner(System.in);
+        System.out.println();
         switch (loginUser.getAccess_level()){
             case 1:
             case 2:
                 AccessDAOImpl accessDAO = new AccessDAOImpl();
                 int officeFloor = accessDAO.getOfficeFloor(loginUser.getOfficeId());
-                if(officeFloor != floor && floor != 1){
-                    System.out.println(floor+"층은 접근할 권한이 없습니다.");
+                if(officeFloor != end && end != 1){
+                    System.out.println(end+"층은 접근할 권한이 없습니다.");
                     System.out.println("이전 화면으로 되돌아갑니다.");
                     return false;
                 }
         }
-        System.out.println("권한 확인되었습니다. 엘리베이터를 호출합니다.");
+        System.out.println(start + "층에 도착했습니다. 문이 열립니다.");
+        System.out.println();
+        try {
+            // 스레드가 연결될 시간을 잠시 줍니다.
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(end + "층에 도착했습니다. 문이 열립니다.");
+        key.nextLine();
         return true;
     }
     private void checkMqttResponse() {

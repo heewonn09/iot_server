@@ -91,11 +91,9 @@ public class MqttManager implements MqttCallback, Runnable {
         }
         try {
             //System.out.println("Publishing message: " + content);
-            System.out.println("Publishing topic: "+topic+", message: " + content);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(1); // QoS Level 1
             this.client.publish(topic, message);
-            System.out.println("Message published.");
         } catch (MqttException me) {
             me.printStackTrace();
         }
@@ -171,7 +169,7 @@ public class MqttManager implements MqttCallback, Runnable {
         // ✅ 등록된 모든 리스너 패턴(Key)을 순회하며 매칭되는지 확인
         for (String topicPattern : topicListeners.keySet()) {
             if (topicMatches(topicPattern, topic)) {
-                System.out.printf("  -> Pattern '%s' matched. Executing listeners...\n", topicPattern);
+                //System.out.printf("  -> Pattern '%s' matched. Executing listeners...\n", topicPattern);
                 // 매칭되는 패턴에 등록된 모든 리스너를 실행
                 for (OnMessageCallback listener : topicListeners.get(topicPattern)) {
                     listener.handle(topic, msg);
