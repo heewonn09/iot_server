@@ -10,22 +10,16 @@ import com.google.gson.JsonObject;
 
 import dao.AccessDAOImpl;
 import dao.ElevatorDAOImpl;
-//github.com/iot-building/iot_server.git
 import dto.MemberDTO;
 import mqtt.MqttManager;
 import mqtt.devices.ELVHandler;
 import service.ElevatorService;
 import service.ElevatorServiceImpl;
 import view.ElevatorUI;
+import static util.ColorUtil.*;
 
 
 public class ElevatorController {
-	final String RESET = "\u001B[0m";
-    final String WHITE_BOLD = "\u001B[1;37m";
-    final String CYAN = "\u001B[36m";
-    final String YELLOW = "\u001B[33m";
-    final String GREEN = "\u001B[32m";
-    final String RED = "\u001B[31m";
     private MemberDTO loginUser;
     private ElevatorUI view;
     private ElevatorService evService;

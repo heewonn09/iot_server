@@ -1,6 +1,6 @@
 package dto;
 
-public class RoomDeviceDTO {
+public class DeviceDTO {
 	private int room_id;
 	private String room_name;
 	private String device_name;
@@ -9,8 +9,8 @@ public class RoomDeviceDTO {
 	private double temperature;
 	private double humidity;
 
-	public RoomDeviceDTO(int room_id, String room_name, String device_name, 
-	                     String device_type, String status, double temperature, double humidity) {
+	public DeviceDTO(int room_id, String room_name, String device_name,
+                     String device_type, String status, double temperature, double humidity) {
 		this.room_id = room_id;
 		this.room_name = room_name;
 		this.device_name = device_name;

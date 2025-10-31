@@ -4,7 +4,7 @@ import java.util.List;
 
 import dao.RoomDeviceDAO;
 import dao.RoomDeviceDAOImpl;
-import dto.RoomDeviceDTO;
+import dto.DeviceDTO;
 import mqtt.MqttManager;
 import mqtt.SensorSubscriber;
 
@@ -21,8 +21,8 @@ public class RoomDeviceServiceImpl implements RoomDeviceService {
 
 
 	@Override
-	public List<RoomDeviceDTO> getDeviceList(int officeId,String officeName) {
-		return dao.selectByRoom(officeId,officeName);
+	public List<DeviceDTO> getDeviceList(int officeId, String officeName) {
+		return dao.getDeviceListByOffice(officeId,officeName);
 	}
 
 	@Override

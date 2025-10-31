@@ -6,15 +6,24 @@ import java.util.Scanner;
 import dto.LoginUserDTO;
 import dto.OfficeDTO;
 import util.ConsoleUtils;
+import static util.ColorUtil.*;
 
 public class MainUI {
-	private static final String RESET = "\u001B[0m";
-    private static final String WHITE_BOLD = "\u001B[1;37m";
-    private static final String CYAN = "\u001B[36m";
-    private static final String YELLOW = "\u001B[33m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String RED = "\u001B[31m";
-    private static final String PURPLE = "\u001B[35m";
+
+    public int loginRegisterUI(){
+        ConsoleUtils.clearConsole();
+        Scanner sc = new Scanner(System.in);
+        System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
+        System.out.println(CYAN + "🏢 [스마트 빌딩 통합 시스템]" + RESET);
+        System.out.println("──────────────────────────────────────────────");
+        System.out.println("1️⃣ 로그인");
+        System.out.println("2️⃣ 회원가입");
+        System.out.println("──────────────────────────────────────────────");
+        System.out.print(YELLOW + "👉 선택 (1~2) >> " + RESET);
+        int sel = sc.nextInt();
+        sc.nextLine(); // flush
+        return sel;
+    }
 	
     public LoginUserDTO loginUI(){
         Scanner key = new Scanner(System.in);
@@ -61,7 +70,7 @@ public class MainUI {
         }
     }
 
-    public static int adminUI(){
+    public int adminUI(){
     	ConsoleUtils.clearConsole();
     	Scanner key = new Scanner(System.in);
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
@@ -79,7 +88,7 @@ public class MainUI {
         
         
     }
-    public static int userUI(){
+    public int userUI(){
     	ConsoleUtils.clearConsole();
     	Scanner key = new Scanner(System.in);
     	System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);

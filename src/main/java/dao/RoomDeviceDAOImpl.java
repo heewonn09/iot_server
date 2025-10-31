@@ -1,7 +1,7 @@
 package dao;
 
 import util.DBUtil;
-import dto.RoomDeviceDTO;
+import dto.DeviceDTO;
 import mqtt.MqttManager;
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	}
 
 	@Override
-	public List<RoomDeviceDTO> selectByRoom(int officeId,String officeName) {
+	public List<DeviceDTO> getDeviceListByOffice(int officeId, String officeName) {
 		// ✅ 수정: 기기별 1개씩만 선택 (GROUP BY type 사용)
 		String sql = "SELECT * FROM devices " +
 				"WHERE office_id = ? AND type IN ('LED', 'DHT', 'HVAC')";
@@ -23,7 +23,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List<RoomDeviceDTO> list = new ArrayList<>();
+		List<DeviceDTO> list = new ArrayList<>();
 
 		try {
 			con = DBUtil.getConnect();
@@ -43,7 +43,8 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 				String name = rs.getString("name");
 				String type = rs.getString("type");
 				String status = rs.getString("status");
-				System.out.println("🔍 데이터 " + count + ":  " + name + " (" + type + ") = " + status);
+				System.out.println("🔍 디바이스 " + count + ":  " + name + " (" + type + ")");
+                System.out.println("   현재 상태 : "+status);
 
 				// ✅ DHT 타입이면 온습도 데이터를 모두 수집
 				if (type.equals("DHT")) {
@@ -92,7 +93,7 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 				String type = rs.getString("type");
 				String status = rs.getString("status");
 
-				RoomDeviceDTO dto = new RoomDeviceDTO(
+				DeviceDTO dto = new DeviceDTO(
 					room_id,
 					name,
 					name,

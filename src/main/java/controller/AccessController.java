@@ -12,6 +12,7 @@ import service.AccessServiceImpl;
 import util.ConsoleUtils;
 import util.TimeUtil;
 import view.MainUI;
+import static util.ColorUtil.*;
 
 public class AccessController {
 
@@ -22,15 +23,6 @@ public class AccessController {
         this.mqttManager = mqttManager;
         service = new AccessServiceImpl(this.mqttManager);
     }
-
-    // ANSI 색상 코드 정의
-    public static final String RESET = "\u001B[0m";
-    public static final String RED = "\u001B[31m";
-    public static final String GREEN = "\u001B[32m";
-    public static final String YELLOW = "\u001B[33m";
-    public static final String BLUE = "\u001B[34m";
-    public static final String CYAN = "\u001B[36m";
-    public static final String WHITE_BOLD = "\u001B[1;37m";
     
     public void handleAccess(MemberDTO currentUser) {
     	ConsoleUtils.clearConsole();
