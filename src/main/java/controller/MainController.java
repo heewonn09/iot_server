@@ -11,7 +11,6 @@ public class MainController {
     private final MainUI view;
     private ElevatorController evController = null; // 엘리베이터 기능을 담당
 
-    // --- 의존성 주입 ---
     private final AuthController authController;
     private final AccessController accessController;
     private final FireController fireController;
@@ -19,6 +18,7 @@ public class MainController {
     private final RoomDeviceController roomDeviceController;
     private final MqttManager mqttManager;
 
+    // 생성자 매개변수로 의존성 주입
     public MainController(AuthController auth, AccessController access, FireController fire, ParkedController park, RoomDeviceController roomDevice, MqttManager mqtt) {
         this.currentUser = null;
         this.view = new MainUI();
