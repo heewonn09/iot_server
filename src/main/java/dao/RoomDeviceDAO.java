@@ -1,9 +1,9 @@
 package dao;
 
-import dto.RoomDeviceDTO;
+import dto.DeviceDTO;
 import java.util.List;
 
 public interface RoomDeviceDAO {
-	List<RoomDeviceDTO> selectByRoom(int officeId, String officeName);
-	int updateStatus(int room_id, String device_name, String status);
+	List<DeviceDTO> getDeviceListByOffice(int officeId, String officeName);
+    int updateStatus(int id,int id2, String sta);
 }

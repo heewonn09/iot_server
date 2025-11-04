@@ -4,7 +4,7 @@ import java.util.List;
 
 import dao.RoomDeviceDAO;
 import dao.RoomDeviceDAOImpl;
-import dto.RoomDeviceDTO;
+import dto.DeviceDTO;
 import mqtt.MqttManager;
 import mqtt.SensorSubscriber;
 
@@ -21,13 +21,13 @@ public class RoomDeviceServiceImpl implements RoomDeviceService {
 
 
 	@Override
-	public List<RoomDeviceDTO> getDeviceList(int officeId,String officeName) {
-		return dao.selectByRoom(officeId,officeName);
+	public List<DeviceDTO> getDeviceList(int officeId, String officeName) {
+		return dao.getDeviceListByOffice(officeId,officeName);
 	}
 
 	@Override
-	public boolean controlDevice(int room_id, String device_name, String status) {
-		int result = dao.updateStatus(room_id, device_name, status);
+	public boolean controlDevice(int room_id, int device_id, String status) {
+		int result = dao.updateStatus(room_id, device_id, status);
 		return result > 0;
 	}
 }

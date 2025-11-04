@@ -111,14 +111,6 @@ public class ParkedController {
                         System.out.println(PURPLE + "🛰 [주차 센서 통신 스레드 시작...]" + RESET);
                         System.out.println("──────────────────────────────────────────────");
 
-                        // ✅ 수신용 SubClient 실행 (차량 감지 로그 확인용)
-                        Thread subThread = new Thread(() -> {
-                            MqttSubClientParking sub = new MqttSubClientParking();
-                            sub.start();
-                        });
-                        subThread.setDaemon(true);
-                        subThread.start();
-
                         // ✅ 파이썬으로 센서 활성화 명령 전송
                         String topic = "1/parking/01/cmd";
                         String msg = "{\"action\":\"activate\"}";

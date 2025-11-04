@@ -21,13 +21,13 @@ public class AccessServiceImpl implements AccessService {
 	public void tryAccessDoor(MemberDTO user, int targetOfficeId) {
 		boolean allowed = dao.checkPermission(user.getUserId(), targetOfficeId, user.getAccess_level());
         // deviceId officeId에 맞는 deviceId를 넣어줘야 함!
-        String type = "RFID"; //devices 테이블에 어떤타입으로 출입문 디바이스가 들어가는지?
+        String type = "SERVO"; //devices 에 SERVO (출입문 역할을 하는 서보모터)가 officeID에 있는 지 아래 코드로 조회
         int getOfficeDeviceId = dao.getOfficeAccess(targetOfficeId, type);
 
         if (allowed) {
             System.out.println("✅ 출입 승인됨: 문이 열립니다.");
             dao.recordAccessEvent(new AccessLogDTO(
-                    getOfficeDeviceId, user.getUserId(), targetOfficeId, "ACCESS", "ALLOWED", "RFID 인증 성공", "정상 출입 허용"));
+                    getOfficeDeviceId, user.getUserId(), targetOfficeId, "ACCESS", "ALLOWED", "권한 인증 성공", "정상 출입 허용"));
             // Mqtt publish 구현
             String topic = targetOfficeId+"/door/"+getOfficeDeviceId+"/cmd";
 
@@ -40,7 +40,7 @@ public class AccessServiceImpl implements AccessService {
         } else {
             System.out.println("❌ 출입 거부: 권한이 없습니다.");
             dao.recordAccessEvent(new AccessLogDTO(
-                    getOfficeDeviceId, user.getUserId(), targetOfficeId, "ACCESS", "DENIED", "RFID 인증 실패", "출입 권한 없음"));
+                    getOfficeDeviceId, user.getUserId(), targetOfficeId, "ACCESS", "DENIED", "권한 인증 실패", "출입 권한 없음"));
             Scanner sc = new Scanner(System.in);
             sc.nextLine();
         }		

@@ -13,6 +13,7 @@ import dto.FireEventDTO;
 import dto.MemberDTO;
 import service.FireService;
 import service.FireServiceImpl;
+import static util.ColorUtil.*;
 
 public class FireController {
     private MqttManager mqttManager;
@@ -28,15 +29,6 @@ public class FireController {
     private double tempThreshold = 60.0;
     private String smokeSensitivity = "HIGH";
     private boolean alarmOn = false;
-    
- // ANSI 색상 코드 정의
-    public static final String RESET = "\u001B[0m";
-    public static final String RED = "\u001B[31m";
-    public static final String GREEN = "\u001B[32m";
-    public static final String YELLOW = "\u001B[33m";
-    public static final String BLUE = "\u001B[34m";
-    public static final String CYAN = "\u001B[36m";
-    public static final String WHITE_BOLD = "\u001B[1;37m";
     
     // 🔹 로그인된 사용자 권한에 따라 모드 분기
     public void handleFireMode(MemberDTO user) {

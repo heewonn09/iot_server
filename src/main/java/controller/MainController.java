@@ -1,43 +1,38 @@
 package controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-
-import dto.LoginUserDTO;
+import static util.ColorUtil.*;
 import dto.MemberDTO;
-import dto.OfficeDTO;
 import mqtt.MqttManager;
-import mqtt.devices.DHtHandler;
-import mqtt.devices.ELVHandler;
-import service.UserService;
-import service.UserServiceImpl;
-import util.ConsoleUtils;
-import controller.AccessController;
-import dao.OfficeDAO;
 import view.MainUI;
 
 public class MainController {
-	final String RESET = "\u001B[0m";
-    final String WHITE_BOLD = "\u001B[1;37m";
-    final String CYAN = "\u001B[36m";
-    final String YELLOW = "\u001B[33m";
-    final String GREEN = "\u001B[32m";
-    final String RED = "\u001B[31m";
-    
-	private MemberDTO currentUser = null; // 현재 로그인한 사용자 정보
-    private final MainUI view = new MainUI(); // 화면을 담당할 View 객체
-    private MqttManager mqttManager;
-    private ElevatorController evController=null;
 
+	private MemberDTO currentUser; // 현재 로그인한 사용자 정보
+    private final MainUI view;
+    private ElevatorController evController = null; // 엘리베이터 기능을 담당
 
-    public MainController() {
-        currentUser = null;
-        mqttManager = new MqttManager();
+    private final AuthController authController;
+    private final AccessController accessController;
+    private final FireController fireController;
+    private final ParkedController parkedController;
+    private final RoomDeviceController roomDeviceController;
+    private final MqttManager mqttManager;
+
+    // 생성자 매개변수로 의존성 주입
+    public MainController(AuthController auth, AccessController access, FireController fire, ParkedController park, RoomDeviceController roomDevice, MqttManager mqtt) {
+        this.currentUser = null;
+        this.view = new MainUI();
+        this.authController = auth;
+        this.accessController = access;
+        this.fireController = fire;
+        this.parkedController = park;
+        this.roomDeviceController = roomDevice;
+        this.mqttManager = mqtt;
+
         settingDevice();
     }
 
-    // 브로커 서버와 연결, subscribe topic 설정
+    // Mqtt 브로커 서버와 연결
     public void settingDevice(){
         Thread mqttThread = new Thread(mqttManager);
         mqttThread.start();
@@ -51,7 +46,6 @@ public class MainController {
             e.printStackTrace();
         }
     }
-
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -62,68 +56,23 @@ public class MainController {
                 handleMainMenu();
             }
         }
-    } 
+    }
     private void loginOrRegisterMenu() {
-    	ConsoleUtils.clearConsole();
-        Scanner sc = new Scanner(System.in);
-        System.out.println(WHITE_BOLD + "\n═══════════════════════════════════════════════════════" + RESET);
-        System.out.println(CYAN + "🏢 [스마트 빌딩 통합 시스템]" + RESET);
-        System.out.println("──────────────────────────────────────────────");
-        System.out.println("1️⃣ 로그인");
-        System.out.println("2️⃣ 회원가입");
-        System.out.println("──────────────────────────────────────────────");
-        System.out.print(YELLOW + "👉 선택 (1~2) >> " + RESET);
-        int sel = sc.nextInt();
-        sc.nextLine(); // flush
-
+    	int sel = view.loginRegisterUI();
         switch (sel) {
-            case 1 -> loginMenu();
-            case 2 -> registerMenu();
-            default -> {
-                System.out.println(RED + "⚠️ 잘못된 입력입니다. 프로그램을 종료합니다." + RESET);
-                exitProgram();
+            case 1 -> {
+                currentUser = authController.loginMenu();
             }
+            case 2 -> authController.registerMenu();
+            default -> exitProgram();
+
         }
     }
-    
-    private void loginMenu() {
-    	Scanner sc = new Scanner(System.in);
-    	LoginUserDTO loginInfo = view.loginUI();
-    	UserService serv = new UserServiceImpl();
-    	currentUser = serv.login(loginInfo.getId(), loginInfo.getPw());
-    	if (currentUser == null) {
-            System.out.println("❌ 로그인 실패. 아이디 혹은 비밀번호를 확인하세요.");
-            sc.nextLine();
-        } else {
-            System.out.printf("✅ 로그인 성공 (%s님, 등급:%d)%n", currentUser.getName(), currentUser.getAccess_level());
-            sc.nextLine();
-        }
-    }
-    private void registerMenu() {
-		String[] info = view.registerUI();
-        Scanner sc = new Scanner(System.in);
-
-        OfficeDAO dao = new OfficeDAO();
-        List<OfficeDTO> list = dao.getAllOfficeInfo();
-        view.showOfficeUI(list);
-        System.out.print("이용하려는 Office ID를 입력하세요: ");
-        int officeId = sc.nextInt();
-
-
-        UserService serv = new UserServiceImpl();
-        boolean result = serv.register(info[0], info[1], info[2],officeId);
-		if (result) {
-			System.out.println("✅ 회원가입 완료! 로그인 후 이용해주세요.");
-		} else {
-			System.out.println("❌ 회원가입 실패. 아이디 중복 또는 DB 오류입니다.");
-		}
-	}
-    
     private void handleMainMenu() {
         // Python -> Java 로 토픽 받을 디바이스에 관련된 topic을 subscribe하는 작업
         if(evController == null){
-            int officeId = 1;
-            int deviceId = 14;
+            int officeId = 1; //아직 엘리베이터가 프로젝트 내에 한 대로만 운영 중임
+            int deviceId = 14; // DB에 연동된 엘리베이터 deviceId, officeId를 숫자로 적어내는 임시방편을 사용함
             evController = new ElevatorController(currentUser, mqttManager,officeId,deviceId);
         }
 		int role = currentUser.getAccess_level();
@@ -141,38 +90,30 @@ public class MainController {
 		}
 	}
     private void adminMenu() {
-		int input = MainUI.adminUI();
-		AccessController accessController = new AccessController(mqttManager);
-		FireController fireController = new FireController(mqttManager);
-		ParkedController adminParkedController = new ParkedController(mqttManager);
-
+		int input = view.adminUI();
 		switch (input) {
-		case 1: // 출입
-			accessController.handleAccess(currentUser);
-			break;
-		case 2:
-			evController.adminAccess();
-			break;
-		case 3:
-			RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
-			roomDevice.handleRoomDeviceAdmin();
-			break;
-		case 4:
-			adminParkedController.adminParked(currentUser);
-			break;
-		case 5: // 관리자, 층 관리자 화재 모드 진입
-			fireController.handleFireMode(currentUser);
-			break;
-		case 6:
-			logout();
-			break;
+            case 1: // 출입
+                accessController.handleAccess(currentUser);
+                break;
+            case 2:
+                evController.adminAccess();
+                break;
+            case 3:
+                roomDeviceController.handleRoomDeviceAdmin();
+                break;
+            case 4:
+                parkedController.adminParked(currentUser);
+                break;
+            case 5: // 관리자, 층 관리자 화재 모드 진입
+                fireController.handleFireMode(currentUser);
+                break;
+            case 6:
+                logout();
+                break;
 		}
 	}
 	private void userMenu() {
-		int input = MainUI.userUI();
-		AccessController accessController = new AccessController(mqttManager);
-		FireController fireController = new FireController(mqttManager);
-		ParkedController userParkedController = new ParkedController(mqttManager);
+		int input = view.userUI();
 		switch (input) {
 		case 1: // 출입
 			accessController.handleAccess(currentUser);
@@ -181,12 +122,10 @@ public class MainController {
 			evController.userAccess();
 			break;
 		case 3:
-			RoomDeviceController roomDevice = new RoomDeviceController(mqttManager);
-
-			roomDevice.handleRoomDeviceUser();
+			roomDeviceController.handleRoomDeviceUser(currentUser);
 			break;
 		case 4:
-			userParkedController.userhandleAccess(currentUser);
+			parkedController.userhandleAccess(currentUser);
 			break;
 		case 5: // 일반 사용자용 화재 모드 진입
 			fireController.handleFireMode(currentUser);
@@ -202,7 +141,7 @@ public class MainController {
         System.out.println("로그아웃합니다.");
 	}
 	private void exitProgram() {
-		// TODO Auto-generated method stub
+        System.out.println(RED + "⚠️ 잘못된 입력입니다. 프로그램을 종료합니다." + RESET);
 		System.exit(0);
 	}
 }

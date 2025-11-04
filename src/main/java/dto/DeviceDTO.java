@@ -1,18 +1,18 @@
 package dto;
 
-public class RoomDeviceDTO {
-	private int room_id;
-	private String room_name;
+public class DeviceDTO {
+	private int office_id;
+	private int device_id;
 	private String device_name;
 	private String device_type;
 	private String status;
 	private double temperature;
 	private double humidity;
 
-	public RoomDeviceDTO(int room_id, String room_name, String device_name, 
-	                     String device_type, String status, double temperature, double humidity) {
-		this.room_id = room_id;
-		this.room_name = room_name;
+	public DeviceDTO(int office_id, int device_id, String device_name,
+                     String device_type, String status, double temperature, double humidity) {
+		this.office_id = office_id;
+		this.device_id = device_id;
 		this.device_name = device_name;
 		this.device_type = device_type;
 		this.status = status;
@@ -20,10 +20,10 @@ public class RoomDeviceDTO {
 		this.humidity = humidity;
 	}
 
-	public int getRoom_id() { return room_id; }
-	public void setRoom_id(int room_id) { this.room_id = room_id; }
-	public String getRoom_name() { return room_name; }
-	public void setRoom_name(String room_name) { this.room_name = room_name; }
+	public int getOffice_id() { return office_id; }
+	public void setOffice_id(int office_id) { this.office_id = office_id; }
+	public int getDevice_id() { return device_id; }
+	public void setDevice_id(int device_id) { this.device_id = device_id; }
 	public String getDevice_name() { return device_name; }
 	public void setDevice_name(String device_name) { this.device_name = device_name; }
 	public String getDevice_type() { return device_type; }
