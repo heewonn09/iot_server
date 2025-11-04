@@ -26,8 +26,8 @@ public class RoomDeviceServiceImpl implements RoomDeviceService {
 	}
 
 	@Override
-	public boolean controlDevice(int room_id, String device_name, String status) {
-		int result = dao.updateStatus(room_id, device_name, status);
+	public boolean controlDevice(int room_id, int device_id, String status) {
+		int result = dao.updateStatus(room_id, device_id, status);
 		return result > 0;
 	}
 }

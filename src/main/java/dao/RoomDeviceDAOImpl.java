@@ -39,73 +39,24 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 
 			while (rs.next()) {
 				count++;
-				int id = rs.getInt("office_id");
-				String name = rs.getString("name");
+                int deviceId = rs.getInt("device_id");
+				String deviceName = rs.getString("name");
 				String type = rs.getString("type");
 				String status = rs.getString("status");
-				System.out.println("🔍 디바이스 " + count + ":  " + name + " (" + type + ")");
+				System.out.println("🔍 디바이스 " + count + ":  " + deviceName + " (" + type + ")");
                 System.out.println("   현재 상태 : "+status);
-
-				// ✅ DHT 타입이면 온습도 데이터를 모두 수집
-				if (type.equals("DHT")) {
-					// 이 부분은 나중에 처리
-				}
+                DeviceDTO dto = new DeviceDTO(
+                        officeId,
+                        deviceId,
+                        deviceName,
+                        type,
+                        status,
+                        (type.equals("DHT") ? temperature : 0.0),
+                        (type.equals("DHT") ? humidity : 0.0)
+                );
+                list.add(dto);
 			}
-
-			// ✅ 두 번째 쿼리: DHT 센서의 모든 데이터를 가져오기
-			String dhtSql = "SELECT * FROM devices " +
-					"WHERE office_id = ? AND type = 'DHT' " +
-					"ORDER BY name";
-			
-			pstmt = con.prepareStatement(dhtSql);
-			pstmt.setInt(1, officeId);
-			rs = pstmt.executeQuery();
-			
-			System.out.println("\n🔍 DHT 센서 데이터 수집:");
-			while (rs.next()) {
-				String status = rs.getString("status");
-				
-				try {
-					if (status != null) {
-						if (status.contains("°C")) {
-							temperature = Double.parseDouble(status.replace("°C", "").trim());
-							System.out.println("   → 온도: " + temperature + "°C");
-						} else if (status.contains("%")) {
-							humidity = Double.parseDouble(status.replace("%", "").trim());
-							System.out.println("   → 습도: " + humidity + "%");
-						}
-					}
-				} catch (NumberFormatException e) {
-					System.out.println("   ⚠️ 파싱 실패: " + status);
-				}
-			}
-
-			// ✅ 다시 한 번 GROUP BY 쿼리로 기본 정보 가져오기
-			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, officeId);
-			rs = pstmt.executeQuery();
-			
-			count = 0;
-			while (rs.next()) {
-				count++;
-				int room_id = rs.getInt("office_id");
-				String name = rs.getString("name");
-				String type = rs.getString("type");
-				String status = rs.getString("status");
-
-				DeviceDTO dto = new DeviceDTO(
-					room_id,
-					name,
-					name,
-					type,
-					status,
-					(type.equals("DHT") ? temperature : 0.0),
-					(type.equals("DHT") ? humidity : 0.0)
-				);
-				list.add(dto);
-			}
-
-			System.out.println("🔍 총 " + count + "개 조회됨\n");
+            System.out.println("🔍 총 " + count + "개 조회됨\n");
 
 		} catch (SQLException e) {
 			System.err.println("❌ SQL 오류: " + e.getMessage());
@@ -118,8 +69,8 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 	}
 
 	@Override
-	public int updateStatus(int officeId, String device_name, String status) {
-		String sql = "UPDATE devices SET status = ?, last_updated = CURRENT_TIMESTAMP WHERE office_id = ? AND name = ?";
+	public int updateStatus(int officeId, int device_id, String status) {
+		String sql = "UPDATE devices SET status = ?, last_updated = CURRENT_TIMESTAMP WHERE office_id = ? AND device_id = ?";
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int result = 0;
@@ -129,12 +80,12 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, status);
 			pstmt.setInt(2, officeId);
-			pstmt.setString(3, device_name);
+			pstmt.setInt(3, device_id);
 			result = pstmt.executeUpdate();
 
 			if (result > 0) {
 				//logDeviceControl(con, officeId, device_name, status);
-				publishMqtt(device_name, status);
+				//publishMqtt(device_id, status);
 			}
 
 		} catch (SQLException e) {
@@ -165,31 +116,31 @@ public class RoomDeviceDAOImpl implements RoomDeviceDAO {
 		}
 	}
 
-	private void publishMqtt(String device_name, String status) {
+	private void publishMqtt(int device_id, String status) {
 		try {
-			String office = device_name.split(" ")[0];
-
-			if (device_name.contains("LED") || device_name.contains("조명")) {
-				String topic = "office/" + office + "/led";
-				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":1}";
-				mqttManager.publish(topic,message);
-				System.out.println("📡 LED 제어 MQTT 발행: " + device_name + " -> " + status);
-
-			} else if (device_name.contains("환풍") || device_name.contains("AC")) {
-				String topic = "office/" + office + "/ac";
-				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":2}";
-				mqttManager.publish(topic,message);
-				System.out.println("📡 AC 제어 MQTT 발행: " + device_name + " -> " + status);
-
-			} else if (device_name.contains("팬") || device_name.contains("쿨링") || device_name.contains("FAN")) {
-				String topic = "office/" + office + "/fan";
-				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":3}";
-				mqttManager.publish(topic,message);
-				System.out.println("📡 FAN 제어 MQTT 발행: " + device_name + " -> " + status);
-
-			} else {
-				System.out.println("⚠️ " + device_name + "는 제어 불가능한 센서입니다.");
-			}
+//			String office = device_id.split(" ")[0];
+//
+//			if (device_id.contains("LED") || device_id.contains("조명")) {
+//				String topic = "office/" + office + "/led";
+//				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":1}";
+//				mqttManager.publish(topic,message);
+//				System.out.println("📡 LED 제어 MQTT 발행: " + device_id + " -> " + status);
+//
+//			} else if (device_id.contains("환풍") || device_id.contains("AC")) {
+//				String topic = "office/" + office + "/ac";
+//				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":2}";
+//				mqttManager.publish(topic,message);
+//				System.out.println("📡 AC 제어 MQTT 발행: " + device_id + " -> " + status);
+//
+//			} else if (device_id.contains("팬") || device_id.contains("쿨링") || device_id.contains("FAN")) {
+//				String topic = "office/" + office + "/fan";
+//				String message = "{\"action\":\"" + status.toUpperCase() + "\",\"device_id\":3}";
+//				mqttManager.publish(topic,message);
+//				System.out.println("📡 FAN 제어 MQTT 발행: " + device_id + " -> " + status);
+//
+//			} else {
+//				System.out.println("⚠️ " + device_id + "는 제어 불가능한 센서입니다.");
+//			}
 
 		} catch (Exception e) {
 			System.err.println("❌ MQTT 발행 오류: " + e.getMessage());

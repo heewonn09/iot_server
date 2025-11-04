@@ -76,7 +76,7 @@ public class RoomDeviceController {
 		String cmd = sc.nextLine();
 		String newStatus = cmd.equalsIgnoreCase("y") ? "ON" : "OFF";
 
-		if (service.controlDevice(selected.getRoom_id(), selected.getDevice_name(), newStatus)) {
+		if (service.controlDevice(selected.getOffice_id(), selected.getDevice_id(), newStatus)) {
 			System.out.println("✅ 상태 변경 완료!");
 			System.out.println("📡 MQTT 발행: " + selected.getDevice_name() + " → " + newStatus);
 

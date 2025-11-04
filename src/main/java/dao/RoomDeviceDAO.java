@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface RoomDeviceDAO {
 	List<DeviceDTO> getDeviceListByOffice(int officeId, String officeName);
-	int updateStatus(int room_id, String device_name, String status);
+    int updateStatus(int id,int id2, String sta);
 }
