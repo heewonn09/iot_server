@@ -102,28 +102,19 @@ Mqtt 토픽을 통해 해당 출입문을 열고, 해당 데이터 로그를 DB�
 
 | 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
 |------------|------------------|-------------|
-| <img src="https://github.com/user-attachments/assets/3e0bb8f0-3d83-4f5f-b918-7a3e9b3d4b61" width="300" /> | <img src= https://github.com/user-attachments/assets/d4e83f8a-46dc-42f9-9fee-f7cfe2ee4c30 height="300" width="300" /> | 초음파 센서가 차량을 감지하면, MQTT 토픽(`parking/status`)으로 차량 감지 이벤트를 서버로 전송하고, 서보모터 게이트가 자동으로 열림.<br>차량이 지나간 뒤 일정 시간이 지나면 게이트가 자동으로 닫힌다. |
-| <img src="" width="300" /> | <img src="https://github.com/user-attachments/assets/IMG_2905.gif" width="300" /> | 실제 시연 장면 — 차량이 진입하면 게이트가 자동으로 열리고, 차량이 지나간 뒤 자동으로 닫히는 과정.<br>MQTT 실시간 통신 기반으로 동작. |
+  | <img src="https://github.com/user-attachments/assets/3e0bb8f0-3d83-4f5f-b918-7a3e9b3d4b61" width="300" /> | <img src= https://github.com/user-attachments/assets/d4e83f8a-46dc-42f9-9fee-f7cfe2ee4c30 height="300" width="300" /> | 실제 시연 장면 — 차량이 진입하면 게이트가 자동으로 열리고, 차량이 지나간 뒤 자동으로 닫히는 과정.<br>MQTT 실시간 통신 기반으로 동작.  | 초음파 센서가 차량을 감지하면, MQTT 토픽(`parking/status`)으로 차량 감지 이벤트를 서버로 전송하고, 서보모터 게이트가 자동으로 열림.<br>차량이 지나간 뒤 일정 시간이 지나면 게이트가 자동으로 닫힌다. |
 | <img src="" width="300" /> | <img src="https://github.com/user-attachments/assets/df8136dc-74e8-4d5c-9f3b-d8ce3db70f14" width="300" /> | 서버(Java)에서 MQTT 메시지를 수신 후, `parking_space` 및 `parking_log` 테이블에 입·출차 기록 저장.<br>관리자는 콘솔 메뉴에서 전체 주차 현황 및 차량 로그를 확인할 수 있다. |
 
 ---
 
 ### 🚗 주차장 사용자 기능
 
-| 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
-|------------|------------------|-------------|
-| <img src="https://github.com/user-attachments/assets/81b14a5b-0a1b-4b5f-b917-33b07c27f601" width="300" /> |  | 로그인한 사용자는 자신의 차량 번호(`vehicle_no`)를 기준으로 최근 주차 내역을 조회할 수 있다. |
-| <img src="" width="300" /> |  | 최근 입차 시간(`last_in`), 출차 시간(`last_out`), 총 이용 횟수(`total_logs`), 누적 주차 시간(`total_minutes`)을 표 형태로 출력한다. |
-| <img src="" width="300" /> |  | 데이터는 `getUserParkingSummary()` 메서드를 통해 SQL JOIN으로 조회되며, 실시간 주차 현황 대시보드에도 반영된다. |
-
----
-
 ----------------------------
 | 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
 |------------|------------------|-------------|
-| <img src="https://github.com/user-attachments/assets/abc12345-7890-efgh-5678-ijkl9012mnop" width="300" /> |  | 로그인 후 `getUserInfo()` 메서드를 통해 `users` 테이블에서 자신의 정보를 조회한다.<br>이때 `user_id`, `id`, `name`, `vehicle_no`, `access_level` 등의 필드를 가져온다. |
-| <img src="" width="300" /> |  | 사용자가 차량 등록 메뉴를 선택하면 `updateVehicle()` 메서드가 실행된다.<br>이미 등록된 차량이 있을 경우 콘솔에 “이미 차량이 등록되어 있습니다.” 메시지가 출력되고, 새로 등록은 불가하다. |
-| <img src="" width="300" /> |  | 차량 번호가 비어 있으면 새로 입력받은 차량 번호(`vehicle_no`)로 DB를 업데이트한다.<br>등록 성공 시 “🚗 차량 등록 성공!” 메시지를 출력하고, 이후 주차장 로그 기록(`parking_log`)에도 해당 차량이 반영된다. |
+| <img src="https://github.com/user-attachments/assets/fde22ef7-f867-4537-9369-fb6765e76791" height= "300" width="300" /> |  | 로그인한 사용자는 최근 주차 내역을 조회할 수 있다.최근 입차 시간(`last_in`), 출차 시간(`last_out`), 총 이용 횟수(`total_logs`), 누적 주차 시간(`total_minutes`)을 표 형태로 출력한다. |
+| <img src= "https://github.com/user-attachments/assets/3f5e28f6-4176-4beb-965f-f43ea6d4abdd" height="300" width="300" /> |  | 로그인 후 `getUserInfo()` 메서드를 통해 `users` 테이블에서 자신의 정보를 조회한다.<br>이때 `user_id`, `id`, `name`, `vehicle_no`, `access_level` 등의 필드를 가져온다. |
+| <img src= "https://github.com/user-attachments/assets/1d0737e5-3958-4344-b054-87a4c610464b" height = "300" width="300" /> |  | 사용자가 차량 등록 메뉴를 선택하면 `updateVehicle()` 메서드가 실행된다.<br>이미 등록된 차량이 있을 경우 콘솔에 “이미 차량이 등록되어 있습니다.” 메시지가 출력되고, 새로 등록은 불가하다. ||
 
 
 
