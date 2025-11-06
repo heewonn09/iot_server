@@ -102,7 +102,7 @@ Mqtt 토픽을 통해 해당 출입문을 열고, 해당 데이터 로그를 DB�
 
 | 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
 |------------|------------------|-------------|
-| <img src="https://github.com/user-attachments/assets/3e0bb8f0-3d83-4f5f-b918-7a3e9b3d4b61" width="300" /> | <img src="https://github.com/user-attachments/assets/45f63b12-6e8b-4a4e-a5cf-d849ecaa9e2c" width="300" /> | 초음파 센서가 차량을 감지하면, MQTT 토픽(`parking/status`)으로 차량 감지 이벤트를 서버로 전송하고, 서보모터 게이트가 자동으로 열림.<br>차량이 지나간 뒤 일정 시간이 지나면 게이트가 자동으로 닫힌다. |
+| <img src="https://github.com/user-attachments/assets/3e0bb8f0-3d83-4f5f-b918-7a3e9b3d4b61" width="300" /> | <img src= https://github.com/user-attachments/assets/d4e83f8a-46dc-42f9-9fee-f7cfe2ee4c30 height="300" width="300" /> | 초음파 센서가 차량을 감지하면, MQTT 토픽(`parking/status`)으로 차량 감지 이벤트를 서버로 전송하고, 서보모터 게이트가 자동으로 열림.<br>차량이 지나간 뒤 일정 시간이 지나면 게이트가 자동으로 닫힌다. |
 | <img src="" width="300" /> | <img src="https://github.com/user-attachments/assets/IMG_2905.gif" width="300" /> | 실제 시연 장면 — 차량이 진입하면 게이트가 자동으로 열리고, 차량이 지나간 뒤 자동으로 닫히는 과정.<br>MQTT 실시간 통신 기반으로 동작. |
 | <img src="" width="300" /> | <img src="https://github.com/user-attachments/assets/df8136dc-74e8-4d5c-9f3b-d8ce3db70f14" width="300" /> | 서버(Java)에서 MQTT 메시지를 수신 후, `parking_space` 및 `parking_log` 테이블에 입·출차 기록 저장.<br>관리자는 콘솔 메뉴에서 전체 주차 현황 및 차량 로그를 확인할 수 있다. |
 
