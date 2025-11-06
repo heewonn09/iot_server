@@ -30,7 +30,7 @@ HDC랩스 NOVA FullStack 과정, 1팀의 First 프로젝트 Repository 입니다
 
  | **MQTT API**                        |
  |-------------------------------------|
- | |\=
+ |<img width="800" height=auto alt="image" src="https://github.com/user-attachments/assets/a589a19b-87c0-4828-ae6a-c4b77cc96e84" />|
 
  ## 프로젝트 파일 트리 (JAVA)
 ```
