@@ -114,7 +114,7 @@ Mqtt 토픽을 통해 해당 출입문을 열고, 해당 데이터 로그를 DB�
 |------------|------------------|-------------|
 | <img src="https://github.com/user-attachments/assets/fde22ef7-f867-4537-9369-fb6765e76791" height= "300" width="300" /> |  | 로그인한 사용자는 최근 주차 내역을 조회할 수 있다.최근 입차 시간(`last_in`), 출차 시간(`last_out`), 총 이용 횟수(`total_logs`), 누적 주차 시간(`total_minutes`)을 표 형태로 출력한다. |
 | <img src= "https://github.com/user-attachments/assets/3f5e28f6-4176-4beb-965f-f43ea6d4abdd" height="300" width="300" /> |  | 사용자가 차량 등록 메뉴를 선택하면 `updateVehicle()` 메서드가 실행된다.<br>이미 등록된 차량이 있을 경우 콘솔에 “이미 차량이 등록되어 있습니다.” 메시지가 출력되고, 새로 등록은 불가하다. |
-| <img src= "https://github.com/user-attachments/assets/1d0737e5-3958-4344-b054-87a4c610464b" height = "300" width="300" /> |   | 로그인 후 `getUserInfo()` 메서드를 통해 `users` 테이블에서 자신의 정보를 조회한다.<br>이때 `user_id`, `id`, `name`, `vehicle_no`, `access_level` 등의 필드를 가져온다. ||
+| <img src= "https://github.com/user-attachments/assets/5343795d-ac54-417f-9e32-4cdd14f3d443" height = "300" width="300" /> |   | 로그인 후 `getUserInfo()` 메서드를 통해 `users` 테이블에서 자신의 정보를 조회한다.<br>이때 `user_id`, `id`, `name`, `vehicle_no`, `access_level` 등의 필드를 가져온다. ||
 
 
 
