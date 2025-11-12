@@ -105,8 +105,8 @@ Mqtt 토픽을 통해 해당 출입문을 열고, 해당 데이터 로그를 DB�
 |------------|--------------------|------------|
 |<img src="https://github.com/user-attachments/assets/31e0d347-ef74-4e0c-9f2a-8b78d267a789" width="300" height=auto>|<img src="https://github.com/user-attachments/assets/a7f2a682-cb68-4d41-a1e9-2c153b0f6a36" width="300" height=auto>| DHT11, MQ2 센서를 이용해 온도·습도·가스 수치를 측정하고, 측정값을 MQTT 프로토콜을 통해 브로커로 전송한다. |
 |<img src="https://github.com/user-attachments/assets/43a8b7b9-b245-42c2-8e9d-f2b5db8d9ad3" width="300" height=auto>| | MQTT 브로커로부터 센서 데이터를 구독(subscribe)하여 DB(`environment_data`)에 실시간 저장한다. |
-|<img src="https://github.com/user-attachments/assets/d8b96df7-60b9-4b11-8b5a-c3b99a278c0a" width="300" height=auto>|<img src="https://github.com/user-attachments/assets/4b94d3cb-93d1-4e2d-9fc8-5d5323e654e2" width="300" height=auto>| Java 콘솔 프로그램에서 DB의 최신 센서 데이터를 조회하고, 임계값(온도·가스)을 초과할 경우 화재 경보를 발생시킨다. |
-|<img src="https://github.com/user-attachments/assets/d20e38a0-8b06-4c17-8306-f939d7b39a57" width="300" height=auto>| | 발생한 화재 이벤트를 `event_log` 테이블에 기록하고, 경보 발생 시간·장소·센서값을 함께 출력한다. |
+|<img src="https://github.com/user-attachments/assets/d8b96df7-60b9-4b11-8b5a-c3b99a278c0a" width="300" height=auto>|<img src="https://github.com/user-attachments/assets/4b94d3cb-93d1-4e2d-9fc8-5d5323e654e2" width="300" height=auto>| Java 콘솔 프로그램에서 DB의 최신 센서 데이터를 조회하고, 임계값(온도·가스)을 초과할 경우 화재 경보(사이렌 부저 및 LED 반복 점등)를 발생시킨다. 관리자 메뉴를 이용하면 권한이 어락된 관리자는 수동으로 경보를 발생시킬 수 있다.|
+|<img src="https://github.com/user-attachments/assets/d20e38a0-8b06-4c17-8306-f939d7b39a57" width="300" height=auto>| | 발생한 화재 이벤트를 `event_log` 테이블에 기록하고, 경보 발생 시간·장소·센서값을 함께 출력한다. 수동으로 경보를 발생시킨 경우 수동으로 해제한다. |
 
 ---
 
