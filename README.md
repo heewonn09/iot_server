@@ -109,7 +109,13 @@ Mqtt 토픽을 통해 해당 출입문을 열고, 해당 데이터 로그를 DB�
 
 ### 🚗 주차장 사용자 기능
 
-## 5. 화재 감지 및 경보 기능
+| 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
+|------------|------------------|-------------|
+| <img src="https://github.com/user-attachments/assets/fde22ef7-f867-4537-9369-fb6765e76791" height= "300" width="300" /> |  | 로그인한 사용자는 최근 주차 내역을 조회할 수 있다.최근 입차 시간(`last_in`), 출차 시간(`last_out`), 총 이용 횟수(`total_logs`), 누적 주차 시간(`total_minutes`)을 표 형태로 출력한다. |
+| <img src= "https://github.com/user-attachments/assets/3f5e28f6-4176-4beb-965f-f43ea6d4abdd" height="300" width="300" /> |  | 사용자가 차량 등록 메뉴를 선택하면 `updateVehicle()` 메서드가 실행된다.<br>이미 등록된 차량이 있을 경우 콘솔에 “이미 차량이 등록되어 있습니다.” 메시지가 출력되고, 새로 등록은 불가하다. |
+| <img src= "https://github.com/user-attachments/assets/5343795d-ac54-417f-9e32-4cdd14f3d443" height = "300" width="300" /> |   | 로그인 후 `getUserInfo()` 메서드를 통해 `users` 테이블에서 자신의 정보를 조회한다.<br>이때 `user_id`, `id`, `name`, `vehicle_no`, `access_level` 등의 필드를 가져온다. ||
+
+## 6. 화재 감지 및 경보 기능
 
 | 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
 |------------|--------------------|------------|
@@ -119,19 +125,6 @@ Mqtt 토픽을 통해 해당 출입문을 열고, 해당 데이터 로그를 DB�
 |<img src="https://github.com/user-attachments/assets/d20e38a0-8b06-4c17-8306-f939d7b39a57" width="300" height=auto>| | 발생한 화재 이벤트를 `event_log` 테이블에 기록하고, 경보 발생 시간·장소·센서값을 함께 출력한다. 수동으로 경보를 발생시킨 경우 수동으로 해제한다. |
 
 ---
-
-
-
-
-
-----------------------------
-| 콘솔 화면 | 디바이스 동작 결과 | 기능 설명 |
-|------------|------------------|-------------|
-| <img src="https://github.com/user-attachments/assets/fde22ef7-f867-4537-9369-fb6765e76791" height= "300" width="300" /> |  | 로그인한 사용자는 최근 주차 내역을 조회할 수 있다.최근 입차 시간(`last_in`), 출차 시간(`last_out`), 총 이용 횟수(`total_logs`), 누적 주차 시간(`total_minutes`)을 표 형태로 출력한다. |
-| <img src= "https://github.com/user-attachments/assets/3f5e28f6-4176-4beb-965f-f43ea6d4abdd" height="300" width="300" /> |  | 사용자가 차량 등록 메뉴를 선택하면 `updateVehicle()` 메서드가 실행된다.<br>이미 등록된 차량이 있을 경우 콘솔에 “이미 차량이 등록되어 있습니다.” 메시지가 출력되고, 새로 등록은 불가하다. |
-| <img src= "https://github.com/user-attachments/assets/5343795d-ac54-417f-9e32-4cdd14f3d443" height = "300" width="300" /> |   | 로그인 후 `getUserInfo()` 메서드를 통해 `users` 테이블에서 자신의 정보를 조회한다.<br>이때 `user_id`, `id`, `name`, `vehicle_no`, `access_level` 등의 필드를 가져온다. ||
-
-
 
 # 👨‍👩‍👧‍팀원 소개
 
