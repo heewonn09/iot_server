@@ -38,3 +38,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### 민감 정보 파일 제외(DB, Mqtt Broker) ###
+*.properties
